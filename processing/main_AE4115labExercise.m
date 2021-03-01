@@ -8,10 +8,6 @@ clear
 close all
 clc
 
-%% GROUP 08 part
-% load test matrix and obtain the columns of the matrices directly
-
-
 
 %% Inputs
 % enter group number 
@@ -20,6 +16,24 @@ groupNo = 1;
 % define root path on disk where data is stored
 diskPath      = './DATA/';
 
+% [GROUP08 CODE]
+tm_norand = readtable(diskPath + "test_matrix_2p3_norand.xlsx");
+tm_rand = readtable(diskPath + "test_matrix_2p3.xlsx");
+
+% get vInf columns
+vInfZeroStab = table2array(tm_rand(16:55, 6));
+vInfFiveStab = table2array(tm_norand(90:125, 6));
+vInfTenStab = table2array(tm_norand(53:89, 6));
+vInfPropoff = table2array(tm_rand(128:137, 6));
+% get rhoInf and TInf of same size
+rhoInfZeroStab = 1.225 * ones(size(vInfZeroStab));
+rhoInfFiveStab = 1.225 * ones(size(vInfFiveStab));
+rhoInfTenStab = 1.225 * ones(size(vInfTenStab));
+rhoInfPropoff = 1.225 * ones(size(vInfPropoff));
+TInfZeroStab = 1.225 * ones(size(vInfZeroStab));
+TInfFiveStab = 1.225 * ones(size(vInfFiveStab));
+TInfTenStab = 1.225 * ones(size(vInfTenStab));
+TInfPropoff = 1.225 * ones(size(vInfPropoff));
 % get indices balance data files
 [idxB] = SUP_getIdx;
 
@@ -36,25 +50,17 @@ fn_BAL = {'raw_beta_sweep_alfa_2_propoff.txt',...
 % per raw data files. In case multiple zero-measurements are available for
 % a datapoint, then add a structure with the filenames of the zero 
 % measurements at the index of that datapoint.
-fn0 = {'zer_ 20210219-120919.txt',...
-       'zer_ 20210219-124833.txt',...
-       'zer_ 20210219-124833.txt',...
-       'zer_ 20210219-124833.txt'};  
+fn0 = {'zero_beta_propoff.txt',...
+       'zero_beta_propon.txt',...
+       'zero_beta_propon.txt',...
+       'zero_beta_propon.txt'};  
    
 % manual input of freestream conditions - ONLY USE FOR GROUPS 1-13 !! 
 % enter vector of values per measurement file
-operManual.vInf = {[40;40;40;40;20;20;20;20;30;30],...
-                   [40;40;40;40;20;20;20;20;30;30;30;30;40;40;40;40;20;20;20;20;30;30;30;30;40;40;40;40;20;20;20;20;30;30;30;30;30;30;30;30],...
-                   [40;40;40;40;20;20;20;20;30;30;30;30;40;40;40;40;20;20;20;20;30;30;30;30;40;40;40;40;20;20;20;20;30;30;30;30],...
-                   [40;40;40;40;20;20;20;20;30;30;30;30;40;40;40;40;20;20;20;20;30;30;30;30;40;40;40;40;20;20;20;20;30;30;30;30;30]};
-operManual.rhoInf = {[1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2],...
-                     [1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2],...
-                     [1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2],...
-                     [1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2;1.2]};
-operManual.tInf = {[288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15],...
-                   [288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15],...
-                   [288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15],...
-                   [288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15;288.15]};
+operManual.vInf = {vInfPropoff, vInfZeroStab, vInfFiveStab, vInfTenStab};
+operManual.rhoInf = {rhoInfPropoff, rhoInfZeroStab, rhoInfFiveStab, ...
+                     rhoInfTenStab};
+operManual.tInf = {TInfPropoff, TInfZeroStab, TInfFiveStab, TInfTenStab};
 
 % wing geometry
 b     = 1.4*cosd(4); % span [m]
