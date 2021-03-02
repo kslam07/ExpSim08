@@ -1,4 +1,4 @@
-function dataStruct = getInitialForces(outputPath)
+function dataStruct = load2Struct(outputPath)
 %GETINITIALFORCES loads the OUTPUT.xls to a structure object
 %   Convert Excel sheet into structure object so that the data can be
 %   passed on efficiently during data corrections.
@@ -18,4 +18,3 @@ function dataStruct = getInitialForces(outputPath)
                         "beta5", dataBeta5, "beta10", dataBeta10);
 
 end
-
