@@ -8,7 +8,6 @@ clear
 close all
 clc
 
-
 %% Inputs
 % enter group number 
 groupNo = 1; 
