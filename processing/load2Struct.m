@@ -11,5 +11,4 @@ function dataStruct = load2Struct(outputPath)
     
     dataStruct = struct("propoff", dataPropoff, "beta0", dataBeta0, ... 
                         "beta5", dataBeta5, "beta10", dataBeta10);
-
 end
