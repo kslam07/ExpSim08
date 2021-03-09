@@ -2,6 +2,11 @@ clear all
 close all
 clc
 
+
+PropellerDiameter = 0.2032;%[m]
+PropellerArea = (pi/4)*PropellerDiameter^2;
+
+%% Solid blockage factor
 % profile=readmatrix('wing airfoil coordinates DU 96-150.dat');
 profile=readmatrix('./DATA/modified_DU96-150.dat');
 profile_cp=dlmread('./DATA/modified_DU96-150.cp','',1,0);
@@ -11,6 +16,7 @@ profile_cp=dlmread('./DATA/modified_DU96-150.cp','',1,0);
 % figure;
 % plot(profile(1:81,1),profile(1:81,2),'o');
 % axis equal
+
 %% K1/K2 (from NACA report 995)
 profile_upper=(profile(51:end,:));%for du96
 profile_uppercp=flip(profile_cp(1:51,:));
@@ -58,7 +64,10 @@ N=7;
 B = 1.29*2*s;
 H = 0.89*2*s;
 BreadthToHeight = B/H;%B/H
-SpantoTunnelBreadth = 2*s/B;%2s/b
+% SpantoTunnelBreadth = 2*s/B;%2s/b
+
+%For body of revolution (fuselage), take SpantoTunnelBreadth = 0
+SpantoTunnelBreadth = 0;%2s/b=0
 
 %check
 
@@ -67,8 +76,18 @@ sigma = sigma_term1_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
     + sigma_term3_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
     + Rn_calc(BreadthToHeight,N);
 
-%tau1=0.8844
+%tau1=0.8844 for the wing
+%tau1=0.8678 for the fuselage
 tau1 = 0.5*sigma*(BreadthToHeight/pi)^1.5
+
+%% wake blockage
+
+%Wind tunnel x-section area = 2.07m^2
+WTCrossSection = (1.8*1.25)-2*(0.3*0.3);% [m^2]
+%% slipstream blockage
+
+
+
 
 
 %% functions 
