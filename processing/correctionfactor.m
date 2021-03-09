@@ -6,6 +6,22 @@ clc
 PropellerDiameter = 0.2032;%[m]
 PropellerArea = (pi/4)*PropellerDiameter^2;
 
+%Wind tunnel x-section area = 2.07m^2
+WTCrossSection = (1.8*1.25)-2*(0.3*0.3);% [m^2]
+
+Volume_wing = 0.0030229;% [m^2]
+Volume_fuselage = 0.0160632;% [m^2]
+%MAC = 0.165m
+cbar_wing = 0.165;% [m]
+%DU-96 thickness = 0.1579c
+%2s = 1.397m^2; --> full wing span
+s = 1.397/2;
+
+%Wind tunnel
+B = 1.29*2*s;
+H = 0.89*2*s;
+BreadthToHeight = B/H;%B/H
+
 %% Solid blockage factor
 % profile=readmatrix('wing airfoil coordinates DU 96-150.dat');
 profile=readmatrix('./DATA/modified_DU96-150.dat');
@@ -17,7 +33,8 @@ profile_cp=dlmread('./DATA/modified_DU96-150.cp','',1,0);
 % plot(profile(1:81,1),profile(1:81,2),'o');
 % axis equal
 
-%% K1/K2 (from NACA report 995)
+%----------------------------------------------------
+% K1/K2 (from NACA report 995)
 profile_upper=(profile(51:end,:));%for du96
 profile_uppercp=flip(profile_cp(1:51,:));
 
@@ -38,52 +55,47 @@ K2=((pi^1.5)/16)*(qsum/thickness);
 %K2 for DU 96 airfoil = 0.6425
 %K2 for 0012 airfoil = 0.687
 
-%Volume of actual wing = 0.0030229 m2
-V = 0.0030229;
-%MAC = 0.165m
-cbar = 0.165;
-%DU-96 thickness = 0.1579c
-t = thickness*cbar;
-%2s = 1.397;
-s = 1.397/2;
-%k1=V/2sct
+t_wing = thickness*cbar_wing;
 
+%k1=V/2sct
 %k1= 0.503 for DU96 airfoil using full span
-k1 = V/(2*s*cbar*t);
+k1 = Volume_wing/(2*s*cbar_wing*t_wing);
 
 % K1=K2/k1;
 K1 = K2/k1
-
+%--------------------------------------------------------------
 %Have to estimate K3 (fuselage) from figure 10.2 in Pope, using d/l=0.14/1.342=0.104
 %K3 approximately 0.91
 K3 = 0.91
-
-%% tau1 (from NACA report 995)
+%---------------------------------------------------------------
+%tau1 (from NACA report 995)
 N=7;
-
-B = 1.29*2*s;
-H = 0.89*2*s;
-BreadthToHeight = B/H;%B/H
-% SpantoTunnelBreadth = 2*s/B;%2s/b
-
-%For body of revolution (fuselage), take SpantoTunnelBreadth = 0
-SpantoTunnelBreadth = 0;%2s/b=0
-
-%check
-
-sigma = sigma_term1_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
+SpantoTunnelBreadth = 2*s/B;%2s/b
+sigma_wing = sigma_term1_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
     + sigma_term2_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
     + sigma_term3_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
     + Rn_calc(BreadthToHeight,N);
 
 %tau1=0.8844 for the wing
 %tau1=0.8678 for the fuselage
-tau1 = 0.5*sigma*(BreadthToHeight/pi)^1.5
+tau1_wing = 0.5*sigma_wing*(BreadthToHeight/pi)^1.5
+
+%For body of revolution (fuselage), take SpantoTunnelBreadth = 0
+SpantoTunnelBreadth = 0;%2s/b=0
+sigma_fuselage = sigma_term1_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
+    + sigma_term2_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
+    + sigma_term3_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
+    + Rn_calc(BreadthToHeight,N);
+tau1_fuselage = 0.5*sigma_fuselage*(BreadthToHeight/pi)^1.5
+
+%epsilon_solid blockage = 0.0071
+epsilon_sb_wing = (K1*tau1_wing*Volume_wing)/(WTCrossSection^1.5) 
+epsilon_sb_fuselage = (K3*tau1_fuselage*Volume_fuselage)/(WTCrossSection^1.5) 
+epsilon_sb = epsilon_sb_wing + epsilon_sb_fuselage
 
 %% wake blockage
 
-%Wind tunnel x-section area = 2.07m^2
-WTCrossSection = (1.8*1.25)-2*(0.3*0.3);% [m^2]
+
 %% slipstream blockage
 
 
