@@ -1,4 +1,4 @@
-function dataStruct = load2Struct(outputPath)
+function dataStruct = load2Struct(measPath, tailOffPath)
 %GETINITIALFORCES loads the OUTPUT.xls to a structure object
 %   Convert Excel sheet into structure object so that the data can be
 %   passed on efficiently during data corrections.
@@ -25,15 +25,19 @@ function dataStruct = load2Struct(outputPath)
     delta = 0.106;                                  % interference factor
     tau2 = 0.7557437729048861;                      % downwash corr. factor
     
-    dataPropoff = readtable(outputPath, "sheet", ... 
+    dataPropoff = readtable(measPath, "sheet", ... 
         "beta_sweep_alfa_2_propoff");
-    dataBeta0 = readtable(outputPath, "sheet", "dir_stab_rudder_zero");
-    dataBeta10 = readtable(outputPath, "sheet", "dir_stab_rudder_ten");
-    dataBeta5 = readtable(outputPath, "sheet", "dir_stab_rudder_five");
-
+    dataTailOffAoA = readtable(tailOffPath, "sheet", "AoS = 0 deg");
+    dataTailOffAoS = readtable(tailOffPath, "sheet", "AoS variations");
+    
+    dataBeta0 = readtable(measPath, "sheet", "dir_stab_rudder_zero");
+    dataBeta10 = readtable(measPath, "sheet", "dir_stab_rudder_ten");
+    dataBeta5 = readtable(measPath, "sheet", "dir_stab_rudder_five");
+    
     dataStruct = struct("i0", struct("propoff", dataPropoff, "beta0", ... 
                  dataBeta0, "beta5", dataBeta5, "beta10", dataBeta10), ...
                  "sRef", S, "span", b, "cRef", c, "Dprop", D, ...
                  "locRefB", XmRefB, "locRefM", XmRefM, "delta", delta, ...
-                 "tau2", tau2);
+                 "tau2", tau2, "tailoffAoA", dataTailOffAoA, ...
+                 "tailoffAoS", dataTailOffAoS);
 end
