@@ -1,0 +1,7 @@
+on_poff_slide: deleted 2nd measurement
+
+stab_r0: deleted 13th measurement
+
+stab_r10: copied 19 to 1 and deleted the 19th measurement
+
+single and both engines on are combined for r5
