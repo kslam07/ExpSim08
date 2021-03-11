@@ -6,21 +6,34 @@ clc
 PropellerDiameter = 0.2032;%[m]
 PropellerArea = (pi/4)*PropellerDiameter^2;
 
-%Wind tunnel x-section area = 2.07m^2
-WTCrossSection = (1.8*1.25)-2*(0.3*0.3);% [m^2]
 
-Volume_wing = 0.0030229;% [m^2]
-Volume_fuselage = 0.0160632;% [m^2]
+
+Volume_wing = 0.0030229;% [m^3]
+Volume_fuselage = 0.0160632;% [m^3]
+Area_wing = 0.2172;% [m^2]
+Area_tail = 0.0858;% [m^2]
+AR_wing = 8.98;
+AR_tail = 3.87;
 %MAC = 0.165m
-cbar_wing = 0.165;% [m]
+MAC_wing = 0.165;% [m]
 %DU-96 thickness = 0.1579c
 %2s = 1.397m^2; --> full wing span
 s = 1.397/2;
 
+tail_arm = 0.535;% [m], distamce from c/4 wing to c/4 tail
+tail_arm_cg = tail_arm - (0.48-0.25)*MAC_wing;% [m]
+
+Vbar = (Area_tail*tail_arm_cg)/(Area_wing*MAC_wing);
 %Wind tunnel
 B = 1.29*2*s;
 H = 0.89*2*s;
 BreadthToHeight = B/H;%B/H
+lambda = H/B;
+
+
+%Wind tunnel x-section area ~= 2.06m^2
+% WTCrossSection = (1.8*1.25)-2*(0.3*0.3);% [m^2]
+WTCrossSection = (B*H)-2*(0.3*0.3);% [m^2]
 
 %% Solid blockage factor
 % profile=readmatrix('wing airfoil coordinates DU 96-150.dat');
@@ -55,11 +68,11 @@ K2=((pi^1.5)/16)*(qsum/thickness);
 %K2 for DU 96 airfoil = 0.6425
 %K2 for 0012 airfoil = 0.687
 
-t_wing = thickness*cbar_wing;
+t_wing = thickness*MAC_wing;
 
 %k1=V/2sct
 %k1= 0.503 for DU96 airfoil using full span
-k1 = Volume_wing/(2*s*cbar_wing*t_wing);
+k1 = Volume_wing/(2*s*MAC_wing*t_wing);
 
 % K1=K2/k1;
 K1 = K2/k1
@@ -99,9 +112,19 @@ epsilon_sb = epsilon_sb_wing + epsilon_sb_fuselage
 %% slipstream blockage
 
 
+%% tail downwash correction
+temp = (0.1*AR_wing*0.8)/(AR_tail+2);
+dCMcgdalphat=-temp*Vbar;% = -0.1456
 
+%%tau2 for tail_arm_cg
 
+%l_t/B = 0.2758
+ratio_uw_tail = tail_arm_cg/B;
+tau2_uw_tail = 0.721;
 
+%(0.5*MAC)/B = 0.0458
+ratio_sc = (0.5*MAC_wing)/B;
+tau2_sc = 0.122;
 %% functions 
 function Emn = Emn_calc(n,m,SpantoTunnelBreadth,BreadthToHeight)%checked
     halfspantobreadth=SpantoTunnelBreadth/2;
