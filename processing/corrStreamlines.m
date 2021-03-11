@@ -31,5 +31,5 @@ function dataStruct = corrStreamlines(dataStruct)
         dataNew.AoA = data.AoA + dalphaSC + dalphaUW;
         dataTableNew.(cell2mat(fieldNames(iName))) = dataNew;
     end
-    dataStruct.i2 = dataTableNew;
+    dataStruct.i2 = dataTableNew;                       % change this later
 end

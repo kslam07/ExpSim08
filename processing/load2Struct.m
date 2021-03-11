@@ -20,6 +20,12 @@ function dataStruct = load2Struct(measPath, tailOffPath)
     XmRefB    = [0,0,0.0465/c]; % moment ref. in balance reference system
     XmRefM    = [0.25,0,0];     % moment ref. in model reference system
     
+    % wind tunnel dimensions
+    tunnelWidth = 1.8;          % [m]
+    tunnelHeight = 1.25;        % [m]
+    tunnelFillet = 0.3;         % [m]
+    tunnelArea = tunnelWidth*tunnelHeight-4*(0.5*tunnelFillet^2);
+    
     % streamline curvature correction factors
     % tail length taken to at half-chord
     delta = 0.106;                                  % interference factor
@@ -39,5 +45,6 @@ function dataStruct = load2Struct(measPath, tailOffPath)
                  "sRef", S, "span", b, "cRef", c, "Dprop", D, ...
                  "locRefB", XmRefB, "locRefM", XmRefM, "delta", delta, ...
                  "tau2", tau2, "tailoffAoA", dataTailOffAoA, ...
-                 "tailoffAoS", dataTailOffAoS);
+                 "tailoffAoS", dataTailOffAoS, "tunnelArea", tunnelArea,...
+                 "tunnelWidth", tunnelWidth, "tunnelHeight", tunnelHeight);
 end
