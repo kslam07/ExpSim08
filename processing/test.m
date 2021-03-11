@@ -1,3 +1,7 @@
+clear all
+close all
+clc
+
 measPath = "OUTPUT.xls";
 tailOffPath = "./DATA/TailOffData.xlsx";
 data = load2Struct(measPath, tailOffPath);
