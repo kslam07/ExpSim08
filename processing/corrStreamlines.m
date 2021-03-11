@@ -27,7 +27,7 @@ function dataStruct = corrStreamlines(dataStruct)
         dCmSC = 0.125.*dalphaSC.*CLa;
         % update data structure
         dataNew = data;
-        dataNew.Cmp = data.Cmp + dCmSC;
+        dataNew.CMp = data.CMp + dCmSC;
         dataNew.AoA = data.AoA + dalphaSC + dalphaUW;
         dataTableNew.(cell2mat(fieldNames(iName))) = dataNew;
     end
