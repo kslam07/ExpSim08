@@ -29,7 +29,7 @@ function dataStruct = load2Struct(measPath, tailOffPath)
     % streamline curvature correction factors
     % tail length taken to at half-chord
     delta = 0.106;                                  % interference factor
-    tau2 = 0.7557437729048861;                      % downwash corr. factor
+    tau2 = 0.122;                                   % downwash corr. factor
     
     dataPropoff = readtable(measPath, "sheet", ... 
         "beta_sweep_alfa_2_propoff");
