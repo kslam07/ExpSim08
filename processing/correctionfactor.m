@@ -101,7 +101,7 @@ sigma_fuselage = sigma_term1_calc(N,SpantoTunnelBreadth,BreadthToHeight)...
     + Rn_calc(BreadthToHeight,N);
 tau1_fuselage = 0.5*sigma_fuselage*(BreadthToHeight/pi)^1.5
 
-%epsilon_solid blockage = 0.0071
+%epsilon_solid blockage = 0.0054
 epsilon_sb_wing = (K1*tau1_wing*Volume_wing)/(WTCrossSection^1.5) 
 epsilon_sb_fuselage = (K3*tau1_fuselage*Volume_fuselage)/(WTCrossSection^1.5) 
 epsilon_sb = epsilon_sb_wing + epsilon_sb_fuselage
