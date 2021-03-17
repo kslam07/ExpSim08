@@ -13,7 +13,7 @@ function dataStruct = load2Struct(measPath, tailOffPath)
     c           = 2*cR/3*(1+taper+taper^2)/(1+taper);   % MAC
     % prop geometry
     D           = 0.2032;                               % propeller dia
-    R           = D/2;                                  % propeller radius
+%     R           = D/2;                                  % propeller radius
 
     % moment reference points
     xCG         = 0.48;             % perc. of the MAC
@@ -28,13 +28,11 @@ function dataStruct = load2Struct(measPath, tailOffPath)
     
     % streamline curvature correction factors
     % tail length taken to be c/2; b_eff = 1.21582
-    delta       = 0.1033;                                % interference
+    delta       = 0.103;                                % interference
     tau2        = 0.1458;                                % upwash corr.
     
     % blockage factors
     epsSB       = 0.005394188570670;                    % solid blockage 
-    epsWB       = 0;                                    % [WiP] change this
-    eps         = epsSB + epsWB;                        % total blockage
     
     dataPropoff = readtable(measPath,"sheet","beta_sweep_alfa_2_propoff");
     dataTailOffAoA = readtable(tailOffPath, "sheet", "AoS = 0 deg");
@@ -51,5 +49,5 @@ function dataStruct = load2Struct(measPath, tailOffPath)
                  "tau2", tau2, "tailoffAoA", dataTailOffAoA, ...
                  "tailoffAoS", dataTailOffAoS, "tunnelArea", tunnelArea,...
                  "tunnelWidth", tunnelWidth, "tunnelHeight", ... 
-                 tunnelHeight, "epsSB", epsSB, "epsWB", epsWB, "eps", eps);
+                 tunnelHeight, "epsSB", epsSB);
 end
