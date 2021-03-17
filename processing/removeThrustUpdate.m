@@ -6,26 +6,26 @@ methods (Static)
         % x=load2Struct('OUTPUT.xls','DATA/TailOffData.xlsx').i0
         %% Get initial data set
         propOff=sortrows(dataTable.propoff,[19 6]);    %read data and order for velocity and engine setting
-        beta0=sortrows(dataTable.beta0,[19 24 6]);
-        beta5=sortrows(dataTable.beta5,[19 24 6]);
-        beta10=sortrows(dataTable.beta10, [19 24 6]);
-        beta0(table2array(beta0(:,28))<2,:)=[];  % remove measurements where propeller was not at right J
+        rud0=sortrows(dataTable.rud0,[19 24 6]);
+        rud5=sortrows(dataTable.rud5,[19 24 6]);
+        rud10=sortrows(dataTable.rud10, [19 24 6]);
+        rud0(table2array(rud0(:,28))<2,:)=[];  % remove measurements where propeller was not at right J
         
         %% Get relevant values
-        beta020=sortrows(beta0(1:9,:),'AoS');
-        beta020b=sortrows(beta0(10:19,:),'AoS');
-        beta040=sortrows(beta0(20:29,:),'AoS');
-        beta040b=sortrows(beta0(30:38,:),'AoS');
+        rud020=sortrows(rud0(1:9,:),'AoS');
+        rud020b=sortrows(rud0(10:19,:),'AoS');
+        rud040=sortrows(rud0(20:29,:),'AoS');
+        rud040b=sortrows(rud0(30:38,:),'AoS');
         
-        beta520=sortrows(beta5(1:9,:),'AoS');
-        beta520b=sortrows(beta5(10:18,:),'AoS');
-        beta540=sortrows(beta5(19:27,:),'AoS');
-        beta540b=sortrows(beta5(28:36,:),'AoS');
+        rud520=sortrows(rud5(1:9,:),'AoS');
+        rud520b=sortrows(rud5(10:18,:),'AoS');
+        rud540=sortrows(rud5(19:27,:),'AoS');
+        rud540b=sortrows(rud5(28:36,:),'AoS');
         
-        beta1020=sortrows(beta10(1:9,:),'AoS');
-        beta1020b=sortrows(beta10(10:18,:),'AoS');
-        beta1040=sortrows(beta10(19:28,:),'AoS');
-        beta1040b=sortrows(beta10(29:37,:),'AoS');
+        rud1020=sortrows(rud10(1:9,:),'AoS');
+        rud1020b=sortrows(rud10(10:18,:),'AoS');
+        rud1040=sortrows(rud10(19:28,:),'AoS');
+        rud1040b=sortrows(rud10(29:37,:),'AoS');
         
      
         %% Remove prop off data from measurements
@@ -38,7 +38,7 @@ methods (Static)
         end
         propOff20=cat(1,propOffneg(1:4,:),propOff20);
  
-        propOff40=sortrows(propOff(1:5,:),'AoS');
+        propOff40=sortrows(propOff(6:10,:),'AoS');
         propOffneg=flip(propOff40);
         lst={'AoS', 'FY', 'MY', 'CFY', 'CY', 'CYaw','CMy'};
         for i=1:length(lst)
@@ -60,98 +60,98 @@ methods (Static)
         fit40CD=polyfit(propOff20.AoS,propOff40.CD,order);
 
         % Make copies of structures
-        beta020PO=beta020;
-        beta020bPO=beta020b;
-        beta040PO=beta040;
-        beta040bPO=beta040b;
+        rud020PO=rud020;
+        rud020bPO=rud020b;
+        rud040PO=rud040;
+        rud040bPO=rud040b;
         
-        beta520PO=beta520;
-        beta520bPO=beta520b;
-        beta540PO=beta540;
-        beta540bPO=beta540b;
+        rud520PO=rud520;
+        rud520bPO=rud520b;
+        rud540PO=rud540;
+        rud540bPO=rud540b;
         
-        beta1020PO=beta1020;
-        beta1020bPO=beta1020b;
-        beta1040PO=beta1040;
-        beta1040bPO=beta1040b;
+        rud1020PO=rud1020;
+        rud1020bPO=rud1020b;
+        rud1040PO=rud1040;
+        rud1040bPO=rud1040b;
         
         % Compute difference between prop on and prop off
-        beta020PO.CN=beta020PO.CN-polyval(fit20CN,beta020PO.AoS);
-        beta020PO.CT=beta020PO.CT-polyval(fit20CT,beta020PO.AoS);
-        beta020PO.CY=beta020PO.CY-polyval(fit20CY,beta020PO.AoS);
-        beta020PO.CL=beta020PO.CL-polyval(fit20CL,beta020PO.AoS);
-        beta020PO.CD=beta020PO.CD-polyval(fit20CD,beta020PO.AoS);
+        rud020PO.CN=rud020PO.CN-polyval(fit20CN,rud020PO.AoS);
+        rud020PO.CT=rud020PO.CT-polyval(fit20CT,rud020PO.AoS);
+        rud020PO.CY=rud020PO.CY-polyval(fit20CY,rud020PO.AoS);
+        rud020PO.CL=rud020PO.CL-polyval(fit20CL,rud020PO.AoS);
+        rud020PO.CD=rud020PO.CD-polyval(fit20CD,rud020PO.AoS);
         
-        beta020bPO.CN=beta020bPO.CN-polyval(fit20CN,beta020bPO.AoS);
-        beta020bPO.CT=beta020bPO.CT-polyval(fit20CT,beta020bPO.AoS);
-        beta020bPO.CY=beta020bPO.CY-polyval(fit20CY,beta020bPO.AoS);
-        beta020bPO.CL=beta020bPO.CL-polyval(fit20CL,beta020bPO.AoS);
-        beta020bPO.CD=beta020bPO.CD-polyval(fit20CD,beta020bPO.AoS);        
+        rud020bPO.CN=rud020bPO.CN-polyval(fit20CN,rud020bPO.AoS);
+        rud020bPO.CT=rud020bPO.CT-polyval(fit20CT,rud020bPO.AoS);
+        rud020bPO.CY=rud020bPO.CY-polyval(fit20CY,rud020bPO.AoS);
+        rud020bPO.CL=rud020bPO.CL-polyval(fit20CL,rud020bPO.AoS);
+        rud020bPO.CD=rud020bPO.CD-polyval(fit20CD,rud020bPO.AoS);        
 
-        beta040PO.CN=beta040PO.CN-polyval(fit40CN,beta040PO.AoS);
-        beta040PO.CT=beta040PO.CT-polyval(fit40CT,beta040PO.AoS);
-        beta040PO.CY=beta040PO.CY-polyval(fit40CY,beta040PO.AoS);
-        beta040PO.CL=beta040PO.CL-polyval(fit40CL,beta040PO.AoS);
-        beta040PO.CD=beta040PO.CD-polyval(fit40CD,beta040PO.AoS);        
+        rud040PO.CN=rud040PO.CN-polyval(fit40CN,rud040PO.AoS);
+        rud040PO.CT=rud040PO.CT-polyval(fit40CT,rud040PO.AoS);
+        rud040PO.CY=rud040PO.CY-polyval(fit40CY,rud040PO.AoS);
+        rud040PO.CL=rud040PO.CL-polyval(fit40CL,rud040PO.AoS);
+        rud040PO.CD=rud040PO.CD-polyval(fit40CD,rud040PO.AoS);        
         
-        beta040bPO.CN=beta040bPO.CN-polyval(fit40CN,beta040bPO.CN);
-        beta040bPO.CT=beta040bPO.CT-polyval(fit40CT,beta040bPO.CN);
-        beta040bPO.CY=beta040bPO.CY-polyval(fit40CY,beta040bPO.CN);
-        beta040bPO.CL=beta040bPO.CL-polyval(fit40CL,beta040bPO.CN);
-        beta040bPO.CD=beta040bPO.CD-polyval(fit40CD,beta040bPO.CN);           
+        rud040bPO.CN=rud040bPO.CN-polyval(fit40CN,rud040bPO.AoS);
+        rud040bPO.CT=rud040bPO.CT-polyval(fit40CT,rud040bPO.AoS);
+        rud040bPO.CY=rud040bPO.CY-polyval(fit40CY,rud040bPO.AoS);
+        rud040bPO.CL=rud040bPO.CL-polyval(fit40CL,rud040bPO.AoS);
+        rud040bPO.CD=rud040bPO.CD-polyval(fit40CD,rud040bPO.AoS);           
         
         %for delta=5
-        beta520PO.CN=beta520PO.CN-polyval(fit20CN,beta520PO.AoS);
-        beta520PO.CT=beta520PO.CT-polyval(fit20CT,beta520PO.AoS);
-        beta520PO.CY=beta520PO.CY-polyval(fit20CY,beta520PO.AoS);
-        beta520PO.CL=beta520PO.CL-polyval(fit20CL,beta520PO.AoS);
-        beta520PO.CD=beta520PO.CD-polyval(fit20CD,beta520PO.AoS);
+        rud520PO.CN=rud520PO.CN-polyval(fit20CN,rud520PO.AoS);
+        rud520PO.CT=rud520PO.CT-polyval(fit20CT,rud520PO.AoS);
+        rud520PO.CY=rud520PO.CY-polyval(fit20CY,rud520PO.AoS);
+        rud520PO.CL=rud520PO.CL-polyval(fit20CL,rud520PO.AoS);
+        rud520PO.CD=rud520PO.CD-polyval(fit20CD,rud520PO.AoS);
         
-        beta520bPO.CN=beta520bPO.CN-polyval(fit20CN,beta520bPO.AoS);
-        beta520bPO.CT=beta520bPO.CT-polyval(fit20CT,beta520bPO.AoS);
-        beta520bPO.CY=beta520bPO.CY-polyval(fit20CY,beta520bPO.AoS);
-        beta520bPO.CL=beta520bPO.CL-polyval(fit20CL,beta520bPO.AoS);
-        beta520bPO.CD=beta520bPO.CD-polyval(fit20CD,beta520bPO.AoS);        
+        rud520bPO.CN=rud520bPO.CN-polyval(fit20CN,rud520bPO.AoS);
+        rud520bPO.CT=rud520bPO.CT-polyval(fit20CT,rud520bPO.AoS);
+        rud520bPO.CY=rud520bPO.CY-polyval(fit20CY,rud520bPO.AoS);
+        rud520bPO.CL=rud520bPO.CL-polyval(fit20CL,rud520bPO.AoS);
+        rud520bPO.CD=rud520bPO.CD-polyval(fit20CD,rud520bPO.AoS);        
 
-        beta540PO.CN=beta540PO.CN-polyval(fit40CN,beta540PO.AoS);
-        beta540PO.CT=beta540PO.CT-polyval(fit40CT,beta540PO.AoS);
-        beta540PO.CY=beta540PO.CY-polyval(fit40CY,beta540PO.AoS);
-        beta540PO.CL=beta540PO.CL-polyval(fit40CL,beta540PO.AoS);
-        beta540PO.CD=beta540PO.CD-polyval(fit40CD,beta540PO.AoS);        
+        rud540PO.CN=rud540PO.CN-polyval(fit40CN,rud540PO.AoS);
+        rud540PO.CT=rud540PO.CT-polyval(fit40CT,rud540PO.AoS);
+        rud540PO.CY=rud540PO.CY-polyval(fit40CY,rud540PO.AoS);
+        rud540PO.CL=rud540PO.CL-polyval(fit40CL,rud540PO.AoS);
+        rud540PO.CD=rud540PO.CD-polyval(fit40CD,rud540PO.AoS);        
        
-        beta540bPO.CN=beta540bPO.CN-polyval(fit40CN,beta540bPO.CN);
-        beta540bPO.CT=beta540bPO.CT-polyval(fit40CT,beta540bPO.CN);
-        beta540bPO.CY=beta540bPO.CY-polyval(fit40CY,beta540bPO.CN);
-        beta540bPO.CL=beta540bPO.CL-polyval(fit40CL,beta540bPO.CN);
-        beta540bPO.CD=beta540bPO.CD-polyval(fit40CD,beta540bPO.CN);    
+        rud540bPO.CN=rud540bPO.CN-polyval(fit40CN,rud540bPO.AoS);
+        rud540bPO.CT=rud540bPO.CT-polyval(fit40CT,rud540bPO.AoS);
+        rud540bPO.CY=rud540bPO.CY-polyval(fit40CY,rud540bPO.AoS);
+        rud540bPO.CL=rud540bPO.CL-polyval(fit40CL,rud540bPO.AoS);
+        rud540bPO.CD=rud540bPO.CD-polyval(fit40CD,rud540bPO.AoS);    
         
         % For delta=10
-        beta1020PO.CN=beta1020PO.CN-polyval(fit20CN,beta1020PO.AoS);
-        beta1020PO.CT=beta1020PO.CT-polyval(fit20CT,beta1020PO.AoS);
-        beta1020PO.CY=beta1020PO.CY-polyval(fit20CY,beta1020PO.AoS);
-        beta1020PO.CL=beta1020PO.CL-polyval(fit20CL,beta1020PO.AoS);
-        beta1020PO.CD=beta1020PO.CD-polyval(fit20CD,beta1020PO.AoS);
+        rud1020PO.CN=rud1020PO.CN-polyval(fit20CN,rud1020PO.AoS);
+        rud1020PO.CT=rud1020PO.CT-polyval(fit20CT,rud1020PO.AoS);
+        rud1020PO.CY=rud1020PO.CY-polyval(fit20CY,rud1020PO.AoS);
+        rud1020PO.CL=rud1020PO.CL-polyval(fit20CL,rud1020PO.AoS);
+        rud1020PO.CD=rud1020PO.CD-polyval(fit20CD,rud1020PO.AoS);
         
-        beta1020bPO.CN=beta1020bPO.CN-polyval(fit20CN,beta1020bPO.AoS);
-        beta1020bPO.CT=beta1020bPO.CT-polyval(fit20CT,beta1020bPO.AoS);
-        beta1020bPO.CY=beta1020bPO.CY-polyval(fit20CY,beta1020bPO.AoS);
-        beta1020bPO.CL=beta1020bPO.CL-polyval(fit20CL,beta1020bPO.AoS);
-        beta1020bPO.CD=beta1020bPO.CD-polyval(fit20CD,beta1020bPO.AoS);        
+        rud1020bPO.CN=rud1020bPO.CN-polyval(fit20CN,rud1020bPO.AoS);
+        rud1020bPO.CT=rud1020bPO.CT-polyval(fit20CT,rud1020bPO.AoS);
+        rud1020bPO.CY=rud1020bPO.CY-polyval(fit20CY,rud1020bPO.AoS);
+        rud1020bPO.CL=rud1020bPO.CL-polyval(fit20CL,rud1020bPO.AoS);
+        rud1020bPO.CD=rud1020bPO.CD-polyval(fit20CD,rud1020bPO.AoS);        
 
-        beta1040PO.CN=beta1040PO.CN-polyval(fit40CN,beta1040PO.AoS);
-        beta1040PO.CT=beta1040PO.CT-polyval(fit40CT,beta1040PO.AoS);
-        beta1040PO.CY=beta1040PO.CY-polyval(fit40CY,beta1040PO.AoS);
-        beta1040PO.CL=beta1040PO.CL-polyval(fit40CL,beta1040PO.AoS);
-        beta1040PO.CD=beta1040PO.CD-polyval(fit40CD,beta1040PO.AoS);        
+        rud1040PO.CN=rud1040PO.CN-polyval(fit40CN,rud1040PO.AoS);
+        rud1040PO.CT=rud1040PO.CT-polyval(fit40CT,rud1040PO.AoS);
+        rud1040PO.CY=rud1040PO.CY-polyval(fit40CY,rud1040PO.AoS);
+        rud1040PO.CL=rud1040PO.CL-polyval(fit40CL,rud1040PO.AoS);
+        rud1040PO.CD=rud1040PO.CD-polyval(fit40CD,rud1040PO.AoS);        
         
-        beta1040bPO.CN=beta1040bPO.CN-polyval(fit40CN,beta1040bPO.CN);
-        beta1040bPO.CT=beta1040bPO.CT-polyval(fit40CT,beta1040bPO.CN);
-        beta1040bPO.CY=beta1040bPO.CY-polyval(fit40CY,beta1040bPO.CN);
-        beta1040bPO.CL=beta1040bPO.CL-polyval(fit40CL,beta1040bPO.CN);
-        beta1040bPO.CD=beta1040bPO.CD-polyval(fit40CD,beta1040bPO.CN);  
+        rud1040bPO.CN=rud1040bPO.CN-polyval(fit40CN,rud1040bPO.AoS);
+        rud1040bPO.CT=rud1040bPO.CT-polyval(fit40CT,rud1040bPO.AoS);
+        rud1040bPO.CY=rud1040bPO.CY-polyval(fit40CY,rud1040bPO.AoS);
+        rud1040bPO.CL=rud1040bPO.CL-polyval(fit40CL,rud1040bPO.AoS);
+        rud1040bPO.CD=rud1040bPO.CD-polyval(fit40CD,rud1040bPO.AoS);  
         
-%         beta040b
-%         removeModelOff(beta040)
+%         rud040b
+%         removeModelOff(rud040)
       
         
 %         [y; num2cell(x)]
@@ -159,17 +159,48 @@ methods (Static)
 %         x=mean(t{2:3,:},1)
 
         %% Compute thrust       
-%         test=beta040b;
+        rud020b;
+        propOff20;
+        rud020bPO;
+        test=rud040bPO;
+        test1=rud040b;
+        thrustIn=test;
+        thrustIn.dPb=test1.CL;
+        thrusttest(thrustIn);
+        
+        t020b=rud020PO.CT.*0.5*1.225.*rud020PO.V.^2*0.2172;
+        propOff40.CT
+        propOff40.AoS
+        rud040b.CT
+        rud040bPO.CT
+%         test=rud020bPO;
+%         test1=rud020b;
+%         for idx=1:1:2
+%             uRatio=1+0.6*2*0.2032/0.576*(test.CT./2.*sqrt((sqrt(1+test.CT./2)+1)./(2*sqrt(1+test.CT./2))));
+%             dcl1=test1.CL.*(1-uRatio);
+%             cdi1=dcl1./pi/3.87;
+%             test.CT=test.CT-cdi1;
+%             test1.CL   =  (test.CN.*cosd(test.AoA)-test.CT.*sind(test.AoA)); % lift
+%             test1.CD   =  (test.CN.*sind(test.AoA)+test.CT.*cosd(test.AoA)).*cosd(test.AoS)+test.CY.*sind(test.AoS); % drag
+%             test1.CYaw = -(test.CN.*sind(test.AoA)+test.CT.*cosd(test.AoA)).*sind(test.AoS)+test.CY.*cosd(test.AoS); % sideforce
+%         end
+%         test.CT
+        thrust=test.CT*0.5*40*40*1.225*dataStruct.sRef/2;
+        TC=thrust./1.225./test.rpsM1.^2./dataStruct.Dprop^4;
+        function testOut=thrusttest(data)
+            data;
+            
+        end
 %         test.AoS
 %         abs(test.AoS)
 %         idx=abs(test.AoS)==min(abs(test.AoS))
 %         zeroAoS=test{idx,:} % data for zero sideslip thrust effect
 
-%         data=beta020bp; % data thrust effect
+%         data=rud020bp; % data thrust effect
 %         idx=abs(data(:,1))==min(abs(data(:,1))); % get index for zero sideslip
 %         zeroAoS=data(idx,:); % data for zero sideslip thrust effect
 %         
-%         dataMO=removeModelOff(beta020b); % data with strut effect removed
+%         dataMO=removeModelOff(rud020b); % data with strut effect removed
 %         zeroAoSMO=dataMO(idx,:);
 %         
 %         dataPO=removeModelOff(propOff20);
@@ -190,9 +221,9 @@ methods (Static)
 %         
         
 
-        dataStruct.i1.beta0=sortrows([beta020; beta020b; beta040; beta040b],1);
-        dataStruct.i1.beta5=sortrows([beta520; beta520b; beta540; beta540b],1);
-        dataStruct.i1.beta10=sortrows([beta1020; beta1020b; beta1040; beta1040b],1);
+        dataStruct.i1.rud0=sortrows([rud020; rud020b; rud040; rud040b],1);
+        dataStruct.i1.rud5=sortrows([rud520; rud520b; rud540; rud540b],1);
+        dataStruct.i1.rud10=sortrows([rud1020; rud1020b; rud1040; rud1040b],1);
 
         dataOut=dataStruct;
 %         dataOut=[]
@@ -213,7 +244,7 @@ methods (Static)
     end
     
     %%
-    function thrustSideOut=thrustSideslip(data)    % T, V, Beta
+    function thrustSideOut=thrustSideslip(data)    % T, V, rud
         sigmaEff=4*6/3/pi*(0.01427/0.2032);
         B0=45; % pitch at r/R=0.75 (is given for r/R=0.7)
         J=2.1;
