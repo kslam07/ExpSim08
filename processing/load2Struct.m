@@ -11,9 +11,11 @@ function dataStruct = load2Struct(measPath, tailOffPath)
     S           = b/2*(cT+cR);                          % reference area
     taper       = cT/cR;                                % taper ratio
     c           = 2*cR/3*(1+taper+taper^2)/(1+taper);   % MAC
+    Stail       = 0.0415;                               % tail area
     % prop geometry
     D           = 0.2032;                               % propeller dia
-%     R           = D/2;                                  % propeller radius
+    R           = D/2;                                  % propeller radius
+    cbar        = 0.01434605;                           % average blade chord length
 
     % moment reference points
     xCG         = 0.48;             % perc. of the MAC
@@ -49,5 +51,6 @@ function dataStruct = load2Struct(measPath, tailOffPath)
                  "tau2", tau2, "tailoffAoA", dataTailOffAoA, ...
                  "tailoffAoS", dataTailOffAoS, "tunnelArea", tunnelArea,...
                  "tunnelWidth", tunnelWidth, "tunnelHeight", ... 
-                 tunnelHeight, "epsSB", epsSB);
+                 tunnelHeight, "epsSB", epsSB, "epsWB", epsWB,...
+                 "sTail", Stail,"eps", eps);
 end

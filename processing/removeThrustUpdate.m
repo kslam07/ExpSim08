@@ -9,8 +9,9 @@ methods (Static)
         rud0=sortrows(dataTable.rud0,[19 24 6]);
         rud5=sortrows(dataTable.rud5,[19 24 6]);
         rud10=sortrows(dataTable.rud10, [19 24 6]);
+        wrongMeas=rud0(table2array(rud0(:,28))<2,:);
         rud0(table2array(rud0(:,28))<2,:)=[];  % remove measurements where propeller was not at right J
-        
+
         %% Get relevant values
         rud020=sortrows(rud0(1:9,:),'AoS');
         rud020b=sortrows(rud0(10:19,:),'AoS');
@@ -53,11 +54,11 @@ methods (Static)
         fit20CL=polyfit(propOff20.AoS,propOff20.CL,order);
         fit20CD=polyfit(propOff20.AoS,propOff20.CD,order);
         
-        fit40CN=polyfit(propOff20.AoS,propOff40.CN,order); % make fit for forces
-        fit40CT=polyfit(propOff20.AoS,propOff40.CT,order);
-        fit40CY=polyfit(propOff20.AoS,propOff40.CY,order);
-        fit40CL=polyfit(propOff20.AoS,propOff40.CL,order);
-        fit40CD=polyfit(propOff20.AoS,propOff40.CD,order);
+        fit40CN=polyfit(propOff40.AoS,propOff40.CN,order); % make fit for forces
+        fit40CT=polyfit(propOff40.AoS,propOff40.CT,order);
+        fit40CY=polyfit(propOff40.AoS,propOff40.CY,order);
+        fit40CL=polyfit(propOff40.AoS,propOff40.CL,order);
+        fit40CD=polyfit(propOff40.AoS,propOff40.CD,order);
 
         % Make copies of structures
         rud020PO=rud020;
@@ -159,110 +160,87 @@ methods (Static)
 %         x=mean(t{2:3,:},1)
 
         %% Compute thrust       
-        rud020b;
-        propOff20;
-        rud020bPO;
-        test=rud040bPO;
-        test1=rud040b;
-        thrustIn=test;
-        thrustIn.dPb=test1.CL;
-        thrusttest(thrustIn);
+        data020.a=rud020bPO;
+        data020.b=removeModelOff(rud020b);        
+        data020.c=rud020b;
+        data020.d=rud020;
         
-        t020b=rud020PO.CT.*0.5*1.225.*rud020PO.V.^2*0.2172;
-        propOff40.CT
-        propOff40.AoS
-        rud040b.CT
-        rud040bPO.CT
-%         test=rud020bPO;
-%         test1=rud020b;
-%         for idx=1:1:2
-%             uRatio=1+0.6*2*0.2032/0.576*(test.CT./2.*sqrt((sqrt(1+test.CT./2)+1)./(2*sqrt(1+test.CT./2))));
-%             dcl1=test1.CL.*(1-uRatio);
-%             cdi1=dcl1./pi/3.87;
-%             test.CT=test.CT-cdi1;
-%             test1.CL   =  (test.CN.*cosd(test.AoA)-test.CT.*sind(test.AoA)); % lift
-%             test1.CD   =  (test.CN.*sind(test.AoA)+test.CT.*cosd(test.AoA)).*cosd(test.AoS)+test.CY.*sind(test.AoS); % drag
-%             test1.CYaw = -(test.CN.*sind(test.AoA)+test.CT.*cosd(test.AoA)).*sind(test.AoS)+test.CY.*cosd(test.AoS); % sideforce
-%         end
-%         test.CT
-        thrust=test.CT*0.5*40*40*1.225*dataStruct.sRef/2;
-        TC=thrust./1.225./test.rpsM1.^2./dataStruct.Dprop^4;
-        function testOut=thrusttest(data)
-            data;
-            
+        data040.a=rud040bPO;
+        data040.b=removeModelOff(rud040b);        
+        data040.c=rud040b;
+        data040.d=rud040;
+        
+        data520.a=rud520bPO;
+        data520.b=removeModelOff(rud520b);        
+        data520.c=rud520b;
+        data520.d=rud520;
+        
+        data540.a=rud540bPO;
+        data540.b=removeModelOff(rud540b); 
+        data540.c=rud540b;
+        data540.d=rud540;
+
+        data1020.a=rud1020bPO;
+        data1020.b=removeModelOff(rud1020b);        
+        data1020.c=rud1020b;
+        data1020.d=rud1020;
+        
+        data1040.a=rud1040bPO;
+        data1040.b=removeModelOff(rud1040b);        
+        data1040.c=rud1040b;
+        data1040.d=rud1040;        
+        
+        data020=thrustIter(data020);
+        data040=thrustIter(data040);
+        data520=thrustIter(data520);
+        data540=thrustIter(data540);
+        data1020=thrustIter(data1020);
+        data1040=thrustIter(data1040);        
+
+%         plot(data040.a.CT)
+%         hold on
+%         rud040
+%         data040=thrustIter(data020);
+%         data040.d.AoS
+%         unique(data040.d.AoS)
+%         data040.d.dPb*2.1*2.1*pi/8
+%         data040.c.dPb*2.1*2.1*pi/8
+%         data040.c.dPb
+%         plot(data040.a.CT)
+
+        
+        function thrustOut=thrustIter(data)
+            TEngine=-data.a.CT*0.5.*data.a.temp.*data.a.V.^2.*dataStruct.sRef/2; % force per engine
+            data.a.CT*dataStruct.sRef/pi*4/dataStruct.Dprop^2/2;
+            TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
+            CT=TC.*data.a.J_M1.^2*pi/8; % CT for engine    
+            TCi=TC;
+            for idx=1:1:5
+                uRatio=1+0.6*2*0.2032/0.576*(TCi.*sqrt((sqrt(1+TCi)+1)./(2*sqrt(1+TCi))));
+                dcl=data.b.CN.*(1-1./uRatio)*dataStruct.sTail/dataStruct.sRef; % computes increase in thrust from tail wing drag
+                dCT=dcl/pi/3.87; % increased drag of tail
+                TCi=TC+dCT;
+            end
+            TCi;
+%             TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2; % nondim with 
+%             data.a.CT=TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
+            data.a.CT=TCi;
+            data.c.dPb=TCi;
+%             data.c.dPb=-TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
+            tcfit=polyfit(data.c.AoS,TCi,length(unique(data.c.AoS))-1);
+%             plot(data.c.AoS,data.c.dPb)
+%             hold on
+%             plot(data.d.AoS,polyval(tcfit,data.d.AoS))
+            data.d.dPb=polyval(tcfit,data.d.AoS);
+            thrustOut=data;
         end
-%         test.AoS
-%         abs(test.AoS)
-%         idx=abs(test.AoS)==min(abs(test.AoS))
-%         zeroAoS=test{idx,:} % data for zero sideslip thrust effect
-
-%         data=rud020bp; % data thrust effect
-%         idx=abs(data(:,1))==min(abs(data(:,1))); % get index for zero sideslip
-%         zeroAoS=data(idx,:); % data for zero sideslip thrust effect
-%         
-%         dataMO=removeModelOff(rud020b); % data with strut effect removed
-%         zeroAoSMO=dataMO(idx,:);
-%         
-%         dataPO=removeModelOff(propOff20);
-%         idx1=abs(data(:,1))==min(abs(data(:,1)));
-%         zeroAoSPO=dataPO(idx1,:);
-%         
-%         CLm=zeroAoSMO(6)./(0.5*1.225*zeroAoSMO(2).^2*0.2172); % CL for sideslip 0
-%         iter=0;
-%         zeroAoS
-%         thrustIn=-1*(-zeroAoS(6)*sind(2)+zeroAoS(4)*cosd(2))
-%         zeroAoS(6);
-%         zeroAoS(2);
-% %         thrustIn=-data(4)
-%         thrustOut=thrustIter([thrustIn, dataMO(5,2), dataMO(5,6),zeroAoSPO(6)/(0.5*1.225*zeroAoS(2)^2*0.2172)])
-%         thrustSideslip([thrustOut zeroAoS(2) 10])
-%         CT=thrustOut/1.225/(zeroAoSMO(2)/2.1/0.2032)^2/0.2032^4/2;
-%         thrustCorr([thrustOut zeroAoS(2) zeroAoSMO(6)/(0.5*1.225*zeroAoS(2)^2*0.2172)])
-%         
         
-
-        dataStruct.i1.rud0=sortrows([rud020; rud020b; rud040; rud040b],1);
-        dataStruct.i1.rud5=sortrows([rud520; rud520b; rud540; rud540b],1);
-        dataStruct.i1.rud10=sortrows([rud1020; rud1020b; rud1040; rud1040b],1);
-
-        dataOut=dataStruct;
-%         dataOut=[]
-        
-     %%
-    function Tout=thrustIter(data) % T, V, FZ, CLTC=0
-        T1=data(1);
-        TOL1=1;
-        while TOL1>0.001
-            CLTC=(data(3)-data(1)*sind(2))/(0.5*1.225*data(2)^2*0.2172);
-            dcl=CLTC-data(4);
-            cdi=dcl/pi/3.87;
-            T=data(1)+cdi*0.5*1.225*data(2)^2.*0.0415;
-            TOL1=(T-T1)/T1;
-            T1=T;
-        end
-        Tout=T;
-    end
-    
-    %%
-    function thrustSideOut=thrustSideslip(data)    % T, V, rud
-        sigmaEff=4*6/3/pi*(0.01427/0.2032);
-        B0=45; % pitch at r/R=0.75 (is given for r/R=0.7)
-        J=2.1;
-%         CT=data(1)/(0.5*1.225*data(2)^2*0.2172);
-        CT=data(1)/(1.225*(data(2)/2.1/0.2032)^2*0.2032^4)
-        dTdb = 4.25*sigmaEff/(1+2*sigmaEff)*sind(B0+3)*(pi*J^2/8+3*sqrt(pi*J^2/8*CT)/(8*sqrt(pi*J^2/8+2/3*CT)))
-        thrustCorrSideOut = data(1)+dTdb*data(3);
-    end
-    
-    %%
-    function thrustCorrOut=thrustCorr(data) % T, V, CLTC
-        TC=data(1)/(0.5*1.225*data(2)^2*0.2172);
-        urat=1+0.6*2*0.2032/0.576*(TC*sqrt((sqrt(1+TC)+1)/(2*sqrt(1+TC))));
-        dcl=data(3)*(1-urat); % CL at thrust
-        cdi=dcl/pi/3.87;
-    end
-    
-    
+        dataStruct.i1.rud0=sortrows([data020.d; data020.c; data040.d; data040.c; wrongMeas],1);
+        dataStruct.i1.rud5=sortrows([data520.d; data520.c; data540.d; data540.c],1);
+        dataStruct.i1.rud10=sortrows([data1020.d; data1020.c; data1040.d; data1040.c],1);
+       
+        dataOut=dataStruct;        
+      
     %%
     function data=removeModelOff(data)
         modelOff=readtable('modelOffData.xlsx','VariableNamingRule','preserve');    % read model off data

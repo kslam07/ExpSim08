@@ -129,7 +129,8 @@ methods (Static)
         
         CLm=zeroAoSMO(6)./(0.5*1.225*zeroAoSMO(2).^2*0.2172); % CL for sideslip 0
         iter=0;
-        thrustIn=-zeroAoS(6)*sind(2)-zeroAoS(4)*cosd(2)
+        zeroAoS
+        thrustIn=-1*(-zeroAoS(6)*sind(2)+zeroAoS(4)*cosd(2))
         zeroAoS(6);
         zeroAoS(2);
 %         thrustIn=-data(4)
@@ -160,8 +161,9 @@ methods (Static)
         sigmaEff=4*6/3/pi*(0.01427/0.2032);
         B0=45; % pitch at r/R=0.75 (is given for r/R=0.7)
         J=2.1;
-        CT=data(1)/(0.5*1.225*data(2)^2*0.2172);
-        dTdb = 4.25*sigmaEff/(1+2*sigmaEff)*sind(B0+3)*(pi*J^2/8+3*sqrt(pi*J^2/8*CT)/(8*sqrt(pi*J^2/8+2/3*CT)));
+%         CT=data(1)/(0.5*1.225*data(2)^2*0.2172);
+        CT=data(1)/(1.225*(data(2)/2.1/0.2032)^2*0.2032^4)
+        dTdb = 4.25*sigmaEff/(1+2*sigmaEff)*sind(B0+3)*(pi*J^2/8+3*sqrt(pi*J^2/8*CT)/(8*sqrt(pi*J^2/8+2/3*CT)))
         thrustCorrSideOut = data(1)+dTdb*data(3);
     end
     

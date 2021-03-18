@@ -2,8 +2,8 @@ classdef thrust_removal
     
 methods (Static)
     function dataOut = mainFunction(dataStruct)
-        propOff=sortrows(dataStruct.propoff,[19 6]);    %read data and order for velocity and engine setting
-        beta0=sortrows(dataStruct.beta0,[19 24 6]);
+        propOff=sortrows(dataStruct.propoff,[19 6])    %read data and order for velocity and engine setting
+        beta0=sortrows(dataStruct.beta0,[19 24 6])
         beta5=sortrows(dataStruct.beta5,[19 24 6]);
         beta10=sortrows(dataStruct.beta10, [19 24 6]);
         beta0(table2array(beta0(:,28))<2,:)=[];  % remove measurements where propeller was not at right J
@@ -20,6 +20,7 @@ methods (Static)
         propOff20=cat(1,pOneg, propOff20); % array containing the prop off forces v=20
         propOff20C=propOff20-aoaEffectF*0.5*1.225*0.2172*20*20; % FX, FY, FZ corrected for aoa 2 deg
         propOff20C=propOff20C-aosEffect.*[0,1,1,1]*0.5*1.225*20*20*0.2172; % FX, FY, FZ corrected for aoa and aos
+        
         
         propOff40=table2array(propOff(6:10,{'AoS','FX','FY','FZ'}));
         pOneg=flip(propOff40(2:5,:));
@@ -44,7 +45,7 @@ methods (Static)
 %         sgtitle('Prop off forces, corrected')
 
         %% implement propoff data
-        order=5;
+        order=8;
         fcor20x=polyfit(propOff20C(:,1),propOff20C(:,2),order); % make fit for forces
         fcor20y=polyfit(propOff20C(:,1),propOff20C(:,3),order);
         fcor20z=polyfit(propOff20C(:,1),propOff20C(:,4),order);
@@ -53,6 +54,15 @@ methods (Static)
         fcor40y=polyfit(propOff40C(:,1),propOff40C(:,3),order);
         fcor40z=polyfit(propOff40C(:,1),propOff40C(:,4),order);
         
+        order=8;
+        fcor20x=polyfit(propOff20(:,1),propOff20(:,2),order); % make fit for forces
+        fcor20y=polyfit(propOff20(:,1),propOff20(:,3),order);
+        fcor20z=polyfit(propOff20(:,1),propOff20(:,4),order);
+        
+        fcor40x=polyfit(propOff40(:,1),propOff40(:,2),order);
+        fcor40y=polyfit(propOff40(:,1),propOff40(:,3),order);
+        fcor40z=polyfit(propOff40(:,1),propOff40(:,4),order);
+
         %% select the correct beta0 values
         beta020=table2array(sortrows(beta0(1:9,:),6)); 
         beta020=beta020(:,[6,30:32]);    % aos, FX, FY, FZ
@@ -63,29 +73,31 @@ methods (Static)
         beta040b=table2array(sortrows(beta0(30:38,:),6));
         beta040b=beta040b(:,[6,30:32]);    % aos, FX, FY, FZ
         
+        plot(beta020(:,1),beta020(:,2)-polyval(fcor20x,beta020(:,1)))
+        
         %% Remove model off data from measurement forces
 %         make fit for aoseffect
 %         subtract aoa from all
 %         fitProp20=polyfit(
-        beta020m=beta020-aoaEffectF*0.5*1.225*0.2172*20*20
+        beta020m=beta020-aoaEffectF*0.5*1.225*0.2172*20*20;
         beta020bm=beta020b-aoaEffectF*0.5*1.225*0.2172*20*20;
         beta040m=beta040-aoaEffectF*0.5*1.225*0.2172*40*40;
         beta040bm=beta040b-aoaEffectF*0.5*1.225*0.2172*40*40;
         
-        aosEffect
+        % aosEffect
         AoSFitX=polyfit(aosEffect(:,1),aosEffect(:,2),8);
         AoSFitY=polyfit(aosEffect(:,1),aosEffect(:,3),8);
         AoSFitZ=polyfit(aosEffect(:,1),aosEffect(:,4),8);
         
-        beta020x=polyval(AoSFitX,beta020(:,1))
+        beta020x=polyval(AoSFitX,beta020(:,1));
         beta020y=polyval(AoSFitY,beta020(:,1));
         beta020z=polyval(AoSFitZ,beta020(:,1));
         corMO020=cat(2, zeros(9,1), beta020x, beta020y, beta020z);
         beta020MO=beta020-corMO020;
         
-        plot(beta020(:,1),beta020(:,2))
-        hold on
-        plot(beta020MO(:,1),beta020MO(:,2),'x')
+%         plot(beta020(:,1),beta020(:,2))
+%         hold on
+%         plot(beta020MO(:,1),beta020MO(:,2),'x')
        
         
         %% compute forces due to propellers
@@ -126,7 +138,7 @@ methods (Static)
 %         hold on
 %         plot(beta020b(:,1),b020bc(:,2:4),'-x')
 %         legend('x','y','z','xc','yc','zc')
-%         title('v=20, OEI')
+%         title('v=20')
 %         subplot(2,2,3)
 %         plot(beta040(:,1),beta040(:,2:4))
 %         hold on
@@ -138,7 +150,7 @@ methods (Static)
 %         hold on
 %         plot(beta040b(:,1),b040bc(:,2:4),'-x')
 %         legend('x','y','z','xc','yc','zc')
-%         title('v=40, OEI')
+%         title('v=40')
 %         sgtitle('Forces due to Thrust')
 %         
 %         figure(3)
