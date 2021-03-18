@@ -1,6 +1,8 @@
-on_poff_slide: deleted 2nd measurement
+on_poff_slide: deleted 3th measurement
 
 stab_r0: deleted 13th measurement
+
+stab_r0_both: AoS -- 0, -2(20), 6(40) not measured
 
 stab_r10: copied 19 to 1 and deleted the 19th measurement
 
