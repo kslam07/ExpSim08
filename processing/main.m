@@ -25,20 +25,22 @@ for i = 1:nIter
     
     % get correction factors based on values in matrix "i1"
     
-    % wake blockage - TODO
+    % wake blockage
+    epsWB = corrWakeblockage(data);
     
     % streamline curvature
-    [dalphaSC, dCmSC, dCdSC] = corrStreamlines(data);
+    [dalpha, dCmSC, dCdSC] = corrStreamlines(data);
     
     % slipstream
     epsSS = corrSlipstream(data);
-    
-    % apply corrections
+    % error vec
+    errThrust = max(data.i1.rud0.dPb ./ res);
+    % APPLY CORRECTIONS
     fieldNames = fieldnames(data.i0);               % get names of tables
     for iName = 2:4
         nameMeas = cell2mat(fieldNames(iName));
         % sum all blockage + slipstream eps
-        epsToti = epsSS.(nameMeas) + data.epsSB;
+        epsToti = epsSS.(nameMeas) + data.epsSB + epsWB.(nameMeas);
         velCorr = (1+epsToti).*data.i1.(nameMeas).V;
         
         % update coefficients coefficients in aero reference frame
@@ -51,7 +53,7 @@ for i = 1:nIter
         CMy = data.i1.(nameMeas).CMy .* data.i1.(nameMeas).V.^2 ./ velCorr.^2;
         
         % correct alpha
-        alpha = data.i1.(nameMeas).AoA + dalphaSC.(nameMeas);
+        alpha = data.i1.(nameMeas).AoA + dalpha.(nameMeas);
         % correct drag coefficient
         CD = CD + dCdSC.(nameMeas);
         % correct pitching moment coefficient
@@ -69,6 +71,8 @@ for i = 1:nIter
         data.i0.(nameMeas).V = velCorr;
         data.i0.(nameMeas).AoA = alpha;
     end
+    res = data.i1.rud0.dPb;
+    disp(errThrust)
 end
         
         

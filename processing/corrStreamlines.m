@@ -25,19 +25,23 @@ function [dalphaSC, dCmSC, dCdSC] = corrStreamlines(dataStruct)
         CLw = CLinterp(data.AoA, data.V, data.AoS);
         % compute AoA correction
         dalphaUW = dataStruct.delta*(dataStruct.sRef/dataStruct.cRef)*CLw;
-        dalphaSCi = dataStruct.tau2*dataStruct.cRef/2*dalphaUW;
+        dalphaSCi = dataStruct.tau2Wing*dataStruct.cRef/2*dalphaUW;
         % compute lift slope for given sideslip and Vinf
-        CLa = computeCLa(data, dataStruct.tailoffAoS);
+        CLa = computeCLa(data, dataStruct.tailoffAoS)';
         
         % compute the correction for CM, CD and alpha
         dCmSCi = 0.125.*dalphaSCi.*CLa;
         dCdSCi = dataStruct.delta*dataStruct.sRef/dataStruct.tunnelArea ...
             *CLw.^2;
-        dalphaSCi = data.AoA + dalphaSCi + dalphaUW;
+        dalphai = dalphaSCi + dalphaUW;
+        % compute corrections for tail
+        dalphaSCTi = dataStruct.delta*dataStruct.sRef/ ... 
+            dataStruct.tunnelArea * CLw * (1 + dataStruct.tau2Tail);
+        dCmSCTi = dataStruct.dCmp25c .* dalphaSCTi;
         
         % store in structures
-        dalphaSC.(cell2mat(fieldNames(iName))) = dalphaSCi;
-        dCmSC.(cell2mat(fieldNames(iName))) = dCmSCi;
+        dalphaSC.(cell2mat(fieldNames(iName))) = dalphai;
+        dCmSC.(cell2mat(fieldNames(iName))) = dCmSCi + dCmSCTi;
         dCdSC.(cell2mat(fieldNames(iName))) = dCdSCi;
     end
 end
