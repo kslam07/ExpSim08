@@ -1,6 +1,6 @@
-function eps_wb = corrWakeblockage(dataStruct)
+function eps_wb = corrWakeblockage(dataStruct, idxTable)
     %To be completed    
-    dataTable = dataStruct.i1;
+    dataTable = dataStruct.(idxTable);
     fieldNames = fieldnames(dataTable);
     
     % define some variables

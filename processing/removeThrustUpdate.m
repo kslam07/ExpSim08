@@ -47,7 +47,7 @@ methods (Static)
         end
         propOff40=cat(1,propOffneg(1:4,:),propOff40);
         
-        order=8;
+        order=3;
         fit20CN=polyfit(propOff20.AoS,propOff20.CN,order); % make fit for forces
         fit20CT=polyfit(propOff20.AoS,propOff20.CT,order);
         fit20CY=polyfit(propOff20.AoS,propOff20.CY,order);
@@ -160,10 +160,10 @@ methods (Static)
 %         x=mean(t{2:3,:},1)
 
         %% Compute thrust       
-        data020.a=rud020bPO;
-        data020.b=removeModelOff(rud020b);        
-        data020.c=rud020b;
-        data020.d=rud020;
+        data020.a=rud020bPO;                      % prop on - prop off
+        data020.b=removeModelOff(rud020b);        % both prop on - model off
+        data020.c=rud020b;                        % both prop on
+        data020.d=rud020;                         % OEI
         
         data040.a=rud040bPO;
         data040.b=removeModelOff(rud040b);        
@@ -215,7 +215,7 @@ methods (Static)
             TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
             CT=TC.*data.a.J_M1.^2*pi/8; % CT for engine    
             TCi=TC;
-            for idx=1:1:5
+            for idx=1:1:50
                 uRatio=1+0.6*2*0.2032/0.576*(TCi.*sqrt((sqrt(1+TCi)+1)./(2*sqrt(1+TCi))));
                 dcl=data.b.CN.*(1-1./uRatio)*dataStruct.sTail/dataStruct.sRef; % computes increase in thrust from tail wing drag
                 dCT=dcl/pi/3.87; % increased drag of tail
@@ -227,7 +227,7 @@ methods (Static)
             data.a.CT=TCi;
             data.c.dPb=TCi;
 %             data.c.dPb=-TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
-            tcfit=polyfit(data.c.AoS,TCi,length(unique(data.c.AoS))-1);
+            tcfit=polyfit(data.c.AoS,TCi,length(unique(data.c.AoS))-5);
 %             plot(data.c.AoS,data.c.dPb)
 %             hold on
 %             plot(data.d.AoS,polyval(tcfit,data.d.AoS))

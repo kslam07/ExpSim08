@@ -1,8 +1,8 @@
-function epsSS = corrSlipstream(dataStruct)
+function epsSS = corrSlipstream(dataStruct, idxTable)
 %CORRSLIPSTREAM corrects slipstream interference / inverse blockage effect
 
     % get table from previous correction
-    dataTable = dataStruct.("i1");                      % change this later
+    dataTable = dataStruct.(idxTable);
     fieldNames = fieldnames(dataTable);
 
     % compute propeller disk area
@@ -15,7 +15,10 @@ function epsSS = corrSlipstream(dataStruct)
         % measurements from a given rudder defl.
         data = dataTable.(cell2mat(fieldNames(iName)));
         % velocity correction factor
-        epsSSi = data.CT ./ 2.*sqrt(1+2*data.CT)*Sp/dataStruct.tunnelArea;
+        signs = double(data.dPb > 0);
+        signs(signs==0) = -1;
+        epsSSi = - signs .* abs(data.dPb) ./ 2.*sqrt(1+2*abs(data.dPb))*Sp ...
+            /dataStruct.tunnelArea;
         epsSS.(cell2mat(fieldNames(iName))) = epsSSi;
     end
 end

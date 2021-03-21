@@ -1,11 +1,11 @@
-function [dalphaSC, dCmSC, dCdSC] = corrStreamlines(dataStruct)
+function [dalphaSC, dCmSC, dCdSC] = corrStreamlines(dataStruct, idxTable)
 %CORRSTREAMLINES Corrects streamline curvature on data
 %   Uses tau_2 and the interference factor obtained from Barlow to estimate
 %   the correction on the angle-of-attack and the moment coefficient
 %   Note: tau_2 computed with lt: |Xcg - X_{0.5c,t}|
     
     % get table from previous correction
-    dataTable = dataStruct.("i1");                      % change this later
+    dataTable = dataStruct.(idxTable);                    
     fieldNames = fieldnames(dataTable);
     % create interpolant function
     CLinterp = scatteredInterpolant(dataStruct.tailoffAoS.AoA, ...
