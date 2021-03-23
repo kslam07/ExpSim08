@@ -6,9 +6,9 @@
 % iterated
 
 %% clear all; close all stuff related to command window
-% clear
-% close all
-% clc
+clear
+close all
+clc
 
 %% load OUTPUT.xlsx file (output of preprocessing)
 measPath = "OUTPUT.xls";
@@ -98,3 +98,23 @@ for i = 2:4
     nameMeas = cell2mat(fieldNames(i));
     data.i0.(nameMeas).dPb = data.i1.(nameMeas).dPb;
 end
+
+
+% Cn and Cy
+
+% dCn/dbeta for all sideslip angles
+% dCn/ddelta_r for all sideslip angles
+
+
+%test
+rud0_OEI(:,1) = data.i1.rud0.V(data.i1.rud0.iM2 == 0);
+rud0_OEI(:,2) = data.i1.rud0.AoS(data.i1.rud0.iM2 == 0);
+rud0_OEI(:,3) = data.i1.rud0.CN(data.i1.rud0.iM2 == 0);
+rud0_OEI(:,4) = data.i1.rud0.CY(data.i1.rud0.iM2 == 0);
+rud0_OEI_V40 = rud0_OEI(rud0_OEI(:,1) == 40,:);
+rud0_OEI_V20 = rud0_OEI(rud0_OEI(:,1) == 20,:);
+figure;
+plot(rud0_OEI_V40(:,2), rud0_OEI_V40(:,3),'o');
+hold on
+plot(rud0_OEI_V20(:,2), rud0_OEI_V20(:,3),'x');
+
