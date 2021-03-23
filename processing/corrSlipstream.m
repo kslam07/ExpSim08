@@ -14,11 +14,14 @@ function epsSS = corrSlipstream(dataStruct, idxTable)
     for iName = 1:length(fieldNames)
         % measurements from a given rudder defl.
         data = dataTable.(cell2mat(fieldNames(iName)));
+        % distinguish # of engines
+        nEngine = 2*double(data.iM2 > 0);   % engine turned off if iM2=0
+        nEngine(nEngine==0) = 1;            % if 0 -> one engine on
         % velocity correction factor
         signs = double(data.dPb > 0);
         signs(signs==0) = -1;
-        epsSSi = - signs .* abs(data.dPb) ./ 2.*sqrt(1+2*abs(data.dPb))*Sp ...
-            /dataStruct.tunnelArea;
+        epsSSi = - signs .* nEngine .* abs(data.dPb) ./ ...
+            2.*sqrt(1+2*abs(data.dPb))*Sp/dataStruct.tunnelArea;
         epsSS.(cell2mat(fieldNames(iName))) = epsSSi;
     end
 end
