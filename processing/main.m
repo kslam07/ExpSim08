@@ -104,6 +104,7 @@ for iName = 2:4
 end
 
 % TODO remove model off data from measurements
+data = removeModelOff(data, "i0");
 
 % Cn and Cy
 
