@@ -9,7 +9,7 @@ methods (Static)
         rud0=sortrows(dataTable.rud0,[19 24 6]);
         rud5=sortrows(dataTable.rud5,[19 24 6]);
         rud10=sortrows(dataTable.rud10, [19 24 6]);
-        wrongMeas=rud0(table2array(rud0(:,28))<2,:);
+        jVar=rud0(table2array(rud0(:,28))<2,:);
         rud0(table2array(rud0(:,28))<2,:)=[];  % remove measurements where propeller was not at right J
 
         %% Get relevant values
@@ -47,6 +47,19 @@ methods (Static)
         end
         propOff40=cat(1,propOffneg(1:4,:),propOff40);
         
+%         subplot(1,2,1)
+%         plot(propOff20.AoS,propOff20.CT)
+%         hold on
+%         plot(rud020.AoS,rud020.CT)
+%         plot(rud020b.AoS,rud020b.CT)
+%         subplot(1,2,2)
+%         plot(propOff40.AoS,propOff40.CT)
+%         hold on
+%         plot(rud040.AoS,rud040.CT)
+%         plot(rud040b.AoS,rud040b.CT)
+
+
+        
         order=3;
         fit20CN=polyfit(propOff20.AoS,propOff20.CN,order); % make fit for forces
         fit20CT=polyfit(propOff20.AoS,propOff20.CT,order);
@@ -54,11 +67,13 @@ methods (Static)
         fit20CL=polyfit(propOff20.AoS,propOff20.CL,order);
         fit20CD=polyfit(propOff20.AoS,propOff20.CD,order);
         
+        
         fit40CN=polyfit(propOff40.AoS,propOff40.CN,order); % make fit for forces
         fit40CT=polyfit(propOff40.AoS,propOff40.CT,order);
         fit40CY=polyfit(propOff40.AoS,propOff40.CY,order);
         fit40CL=polyfit(propOff40.AoS,propOff40.CL,order);
         fit40CD=polyfit(propOff40.AoS,propOff40.CD,order);
+        
 
         % Make copies of structures
         rud020PO=rud020;
@@ -76,6 +91,8 @@ methods (Static)
         rud1040PO=rud1040;
         rud1040bPO=rud1040b;
         
+        jVarPO=jVar;
+        
         % Compute difference between prop on and prop off
         rud020PO.CN=rud020PO.CN-polyval(fit20CN,rud020PO.AoS);
         rud020PO.CT=rud020PO.CT-polyval(fit20CT,rud020PO.AoS);
@@ -88,7 +105,7 @@ methods (Static)
         rud020bPO.CY=rud020bPO.CY-polyval(fit20CY,rud020bPO.AoS);
         rud020bPO.CL=rud020bPO.CL-polyval(fit20CL,rud020bPO.AoS);
         rud020bPO.CD=rud020bPO.CD-polyval(fit20CD,rud020bPO.AoS);        
-
+%         plot(rud020bPO.AoS,rud020bPO.CT)
         rud040PO.CN=rud040PO.CN-polyval(fit40CN,rud040PO.AoS);
         rud040PO.CT=rud040PO.CT-polyval(fit40CT,rud040PO.AoS);
         rud040PO.CY=rud040PO.CY-polyval(fit40CY,rud040PO.AoS);
@@ -100,6 +117,13 @@ methods (Static)
         rud040bPO.CY=rud040bPO.CY-polyval(fit40CY,rud040bPO.AoS);
         rud040bPO.CL=rud040bPO.CL-polyval(fit40CL,rud040bPO.AoS);
         rud040bPO.CD=rud040bPO.CD-polyval(fit40CD,rud040bPO.AoS);           
+        
+        jVarPO.CN=jVarPO.CN-propOff40(5,:).CN*ones(2,1);
+        jVarPO.CT=jVarPO.CT-propOff40(5,:).CT*ones(2,1);
+        jVarPO.CY=jVarPO.CY-propOff40(5,:).CY*ones(2,1);
+        jVarPO.CL=jVarPO.CL-propOff40(5,:).CL*ones(2,1);
+        jVarPO.CD=jVarPO.CD-propOff40(5,:).CD*ones(2,1);
+
         
         %for delta=5
         rud520PO.CN=rud520PO.CN-polyval(fit20CN,rud520PO.AoS);
@@ -190,8 +214,13 @@ methods (Static)
         data1040.c=rud1040b;
         data1040.d=rud1040;        
         
+        datajVar.a=jVarPO;
+        datajVar.b=removeModelOffjVar(jVar);
+        datajVar.c=jVarPO;
+        
         data020=thrustIter(data020);
         data040=thrustIter(data040);
+        datajVar=thrustIterjVar(datajVar);
         data520=thrustIter(data520);
         data540=thrustIter(data540);
         data1020=thrustIter(data1020);
@@ -209,39 +238,63 @@ methods (Static)
 %         plot(data040.a.CT)
 
         
-        function thrustOut=thrustIter(data)
-            TEngine=-data.a.CT*0.5.*data.a.temp.*data.a.V.^2.*dataStruct.sRef/2; % force per engine
-            data.a.CT*dataStruct.sRef/pi*4/dataStruct.Dprop^2/2;
-            TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
-            CT=TC.*data.a.J_M1.^2*pi/8; % CT for engine    
-            TCi=TC;
-            for idx=1:1:50
-                uRatio=1+0.6*2*0.2032/0.576*(TCi.*sqrt((sqrt(1+TCi)+1)./(2*sqrt(1+TCi))));
-                dcl=data.b.CN.*(1-1./uRatio)*dataStruct.sTail/dataStruct.sRef; % computes increase in thrust from tail wing drag
-                dCT=dcl/pi/3.87; % increased drag of tail
-                TCi=TC+dCT;
-            end
-            TCi;
-%             TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2; % nondim with 
-%             data.a.CT=TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
-            data.a.CT=TCi;
-            data.c.dPb=TCi;
-%             data.c.dPb=-TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
-            tcfit=polyfit(data.c.AoS,TCi,length(unique(data.c.AoS))-5);
-%             plot(data.c.AoS,data.c.dPb)
-%             hold on
-%             plot(data.d.AoS,polyval(tcfit,data.d.AoS))
-            data.d.dPb=polyval(tcfit,data.d.AoS);
-            thrustOut=data;
-        end
-        
-        dataStruct.i1.rud0=sortrows([data020.d; data020.c; data040.d; data040.c; wrongMeas],1);
+        dataStruct.i1.rud0=sortrows([data020.d; data020.c; data040.d; data040.c; datajVar.c],1);
         dataStruct.i1.rud5=sortrows([data520.d; data520.c; data540.d; data540.c],1);
         dataStruct.i1.rud10=sortrows([data1020.d; data1020.c; data1040.d; data1040.c],1);
        
-        dataOut=dataStruct;        
+        dataOut=dataStruct;      
+ 
+    %%
+%         function output=SideslipCorr(data)
+%             solid=4*
+%             dCN/da=
       
     %%
+    function thrustOut=thrustIter(data)
+        TEngine=-data.a.CT*0.5.*data.a.temp.*data.a.V.^2.*dataStruct.sRef/2; % force per engine
+        data.a.CT*dataStruct.sRef/pi*4/dataStruct.Dprop^2/2;
+        TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
+        CT=TC.*data.a.J_M1.^2*pi/8; % CT for engine    
+        TCi=TC;
+        for idx=1:1:50
+            uRatio=1+0.6*2*0.2032/0.576*(TCi.*sqrt((sqrt(1+TCi)+1)./(2*sqrt(1+TCi))));
+            dcl=data.b.CN.*(1-1./uRatio)*dataStruct.sTail/dataStruct.sRef; % computes increase in thrust from tail wing drag
+            dCT=dcl/pi/3.87; % increased drag of tail
+            TCi=TC+dCT;
+        end
+        TCi;
+%             TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2; % nondim with 
+%             data.a.CT=TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
+        data.a.CT=TCi;
+%         plot(data.a.AoS,TCi)
+        data.c.dPb=TCi;
+%             data.c.dPb=-TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
+        tcfit=polyfit(data.c.AoS,TCi,length(unique(data.c.AoS))-1);
+%             plot(data.c.AoS,data.c.dPb)
+%             hold on
+%             plot(data.d.AoS,polyval(tcfit,data.d.AoS))
+        data.d.dPb=polyval(tcfit,data.d.AoS);
+        thrustOut=data;
+    end
+    
+        function thrustOut=thrustIterjVar(data)
+        TEngine=-data.a.CT*0.5.*data.a.temp.*data.a.V.^2.*dataStruct.sRef/2; % force per engine
+        data.a.CT*dataStruct.sRef/pi*4/dataStruct.Dprop^2/2;
+        TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
+        CT=TC.*data.a.J_M1.^2*pi/8; % CT for engine    
+        TCi=TC;
+        for idx=1:1:5
+            uRatio=1+0.6*2*0.2032/0.576*(TCi.*sqrt((sqrt(1+TCi)+1)./(2*sqrt(1+TCi))));
+            dcl=data.b.CN.*(1-1./uRatio)*dataStruct.sTail/dataStruct.sRef; % computes increase in thrust from tail wing drag
+            dCT=dcl/pi/3.87; % increased drag of tail
+            TCi=TC+dCT;
+        end
+        TCi;
+        data.a.CT=TCi;
+        data.c.dPb=TCi;
+        thrustOut=data;
+    end
+    
     function data=removeModelOff(data)
         modelOff=readtable('modelOffData.xlsx','VariableNamingRule','preserve');    % read model off data
         AoAEffect=table2array(modelOff(8,2:8))-table2array(modelOff(6,2:8)); % effect of 2 deg aoa on forces
@@ -283,6 +336,49 @@ methods (Static)
         end
 %         plot(data.AoS,data.CD)
     end 
-end
+    
+    function data=removeModelOffjVar(data)
+        modelOff=readtable('modelOffData.xlsx','VariableNamingRule','preserve');    % read model off data
+        AoAEffect=table2array(modelOff(8,2:8))-table2array(modelOff(6,2:8)); % effect of 2 deg aoa on forces
+        AoSEffect=modelOff{11,11:17}; % forces at -10, -6, -4, -2, 0, 2, 4, 6, 10 for aos
+
+        CD=AoSEffect(:,2)+AoAEffect(:,2);
+        Cy=AoSEffect(:,3)+AoAEffect(:,3);
+        CL=AoSEffect(:,4)+AoAEffect(:,4);
+        CMroll=AoSEffect(:,5)+AoAEffect(:,5);
+        CMpitch=AoSEffect(:,6)+AoAEffect(:,6);
+        CMyaw=AoSEffect(:,7)+AoAEffect(:,7);
+        
+        data.CD=data.CD-CD;
+        data.CYaw=data.CYaw-Cy;
+        data.CL=data.CL-CL;
+        data.CMr=data.CMr-CMroll;
+        data.CMp=data.CMp-CMpitch;
+        data.CMp25c=data.CMp25c-CMpitch;
+        data.CMy=data.CMy-CMyaw;
+                
+
+        for idx=1:length(data.AoS)
+            dcm=angle2dcm(deg2rad(data.AoS(idx)), deg2rad(data.AoA(idx)), 0);
+            aero=[-data.CD(idx); data.CYaw(idx); -data.CL(idx)];
+            model=dcm*aero.*[-1; 1; -1];
+            data.CT(idx)=model(1);
+            data.CY(idx)=model(2);
+            data.CN(idx)=model(3);
+        end
+    end 
+    end   
+
+    function out=sideslipCorrection(data)
+        sigmaEff=4*6/3/pi*(0.01427/0.2032);
+        B0=45; % pitch at r/R=0.75 (is given for r/R=0.7)
+        dYdbeta = 4.25*sigmaEff./(1+2*sigmaEff)*sind(B0+3).*(pi*data.J_M1.^2./8+3*sqrt(pi.*data.J_M1.^2./8.*abs(data.dPb))./(8*sqrt(pi*data.J_M1.^2/8+2/3.*data.dPb)));
+        dY=dYdbeta.*deg2rad(data.AoS);
+        dyRef=8/pi./data.J_M1.^2.*pi/4*0.2032^2/0.2171696.*dY;
+        dyRef=8/pi./data.J_M1.^2.*pi/4.*dY;
+%         [data.CY data.CY-dyRef data.CY-8/pi./data.J_M1.^2.*pi/4*0.2032^2/0.2171696.*dY]
+        data.CY-dyRef;
+    end 
+    
 end    
 end
