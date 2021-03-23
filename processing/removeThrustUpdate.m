@@ -47,19 +47,7 @@ methods (Static)
         end
         propOff40=cat(1,propOffneg(1:4,:),propOff40);
         
-%         subplot(1,2,1)
-%         plot(propOff20.AoS,propOff20.CT)
-%         hold on
-%         plot(rud020.AoS,rud020.CT)
-%         plot(rud020b.AoS,rud020b.CT)
-%         subplot(1,2,2)
-%         plot(propOff40.AoS,propOff40.CT)
-%         hold on
-%         plot(rud040.AoS,rud040.CT)
-%         plot(rud040b.AoS,rud040b.CT)
-
-
-        
+     
         order=3;
         fit20CN=polyfit(propOff20.AoS,propOff20.CN,order); % make fit for forces
         fit20CT=polyfit(propOff20.AoS,propOff20.CT,order);
@@ -106,24 +94,25 @@ methods (Static)
         rud020bPO.CL=rud020bPO.CL-polyval(fit20CL,rud020bPO.AoS);
         rud020bPO.CD=rud020bPO.CD-polyval(fit20CD,rud020bPO.AoS);        
         
-        subplot(1,2,1)
-        plot(propOff20.AoS,propOff20.CT)
-        hold on 
-        plot(rud020.AoS,rud020.CT)
-        plot(propOff20.AoS,polyval(fit20CT,propOff20.AoS))
-        title('v = 20')
-        xlabel('\beta')
-        ylabel('C_{Tref}')
-        
-               
-        subplot(1,2,2)
-        plot(propOff40.AoS,propOff40.CT)
-        hold on 
-        plot(rud040b.AoS,rud040b.CT)
-        plot(propOff40.AoS,polyval(fit40CT,propOff40.AoS))
-        title('v = 40')
-        xlabel('\beta')
-        ylabel('C_{Tref}')
+%         subplot(1,2,1)
+%         plot(propOff20.AoS,propOff20.CT)
+%         hold on 
+%         plot(rud1020b.AoS,rud1020b.CT)
+%         plot(propOff20.AoS,polyval(fit20CT,propOff20.AoS))
+%         title('v = 20')
+%         xlabel('\beta')
+%         ylabel('C_{Tref}')
+%         legend('Prop Off', 'Prop On', 'Prop Off fit','Location','south')
+%                
+%         subplot(1,2,2)
+%         plot(propOff40.AoS,propOff40.CT)
+%         hold on 
+%         plot(rud040b.AoS,rud040b.CT)
+%         plot(propOff40.AoS,polyval(fit40CT,propOff40.AoS))
+%         title('v = 40')
+%         xlabel('\beta')
+%         ylabel('C_{Tref}')
+%         legend('Prop Off', 'Prop On', 'Prop Off fit','Location','south')
         
 %         plot(rud020bPO.AoS,rud020bPO.CT)
         rud040PO.CN=rud040PO.CN-polyval(fit40CN,rud040PO.AoS);
@@ -205,37 +194,37 @@ methods (Static)
 
         %% Compute thrust       
         data020.a=rud020bPO;                      % prop on - prop off
-        data020.b=removeModelOff(rud020b);        % both prop on - model off
+        data020.b=removeThrustUpdate.removeModelOff(rud020b);        % both prop on - model off
         data020.c=rud020b;                        % both prop on
         data020.d=rud020;                         % OEI
         
         data040.a=rud040bPO;
-        data040.b=removeModelOff(rud040b);        
+        data040.b=removeThrustUpdate.removeModelOff(rud040b);        
         data040.c=rud040b;
         data040.d=rud040;
         
         data520.a=rud520bPO;
-        data520.b=removeModelOff(rud520b);        
+        data520.b=removeThrustUpdate.removeModelOff(rud520b);        
         data520.c=rud520b;
         data520.d=rud520;
         
         data540.a=rud540bPO;
-        data540.b=removeModelOff(rud540b); 
+        data540.b=removeThrustUpdate.removeModelOff(rud540b); 
         data540.c=rud540b;
         data540.d=rud540;
 
         data1020.a=rud1020bPO;
-        data1020.b=removeModelOff(rud1020b);        
+        data1020.b=removeThrustUpdate.removeModelOff(rud1020b);        
         data1020.c=rud1020b;
         data1020.d=rud1020;
         
         data1040.a=rud1040bPO;
-        data1040.b=removeModelOff(rud1040b);        
+        data1040.b=removeThrustUpdate.removeModelOff(rud1040b);        
         data1040.c=rud1040b;
         data1040.d=rud1040;        
         
         datajVar.a=jVarPO;
-        datajVar.b=removeModelOffjVar(jVar);
+        datajVar.b=removeThrustUpdate.removeModelOffjVar(jVar);
         datajVar.c=jVarPO;
         
         data020=thrustIter(data020);
@@ -257,7 +246,11 @@ methods (Static)
 %         data040.c.dPb
 %         plot(data040.a.CT)
 
-        
+       
+%         data020.c=removeThrustUpdate.sideslipCorrection(data020.c);
+%         data020.c=removeThrustUpdate.sideslipCorrection(data020.c);
+%         data020.c=removeThrustUpdate.sideslipCorrection(data020.c);
+%         data020.c=removeThrustUpdate.sideslipCorrection(data020.c);
 
         dataStruct.i1.rud0=sortrows([data020.d; data020.c; data040.d; data040.c; datajVar.c],1);
         dataStruct.i1.rud5=sortrows([data520.d; data520.c; data540.d; data540.c],1);
@@ -335,7 +328,7 @@ methods (Static)
         thrustOut=data;
     end
     
-        function thrustOut=thrustIterjVar(data)
+    function thrustOut=thrustIterjVar(data)
         TEngine=-data.a.CT*0.5.*data.a.temp.*data.a.V.^2.*dataStruct.sRef/2; % force per engine
         data.a.CT*dataStruct.sRef/pi*4/dataStruct.Dprop^2/2;
         TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
@@ -352,48 +345,8 @@ methods (Static)
         data.c.dPb=TCi;
         thrustOut=data;
     end
-    
-    function data=removeModelOff(data)
-        modelOff=readtable('modelOffData.xlsx','VariableNamingRule','preserve');    % read model off data
-        AoAEffect=table2array(modelOff(8,2:8))-table2array(modelOff(6,2:8)); % effect of 2 deg aoa on forces
-        AoSEffect=modelOff{[1,5,7,9,11,13,15,17,21],11:17}; % forces at -10, -6, -4, -2, 0, 2, 4, 6, 10 for aos
-        
-        AoSFitCD=polyfit(AoSEffect(:,1),AoSEffect(:,2),8); % makes fit of forces in aero frame
-        AoSFitCy=polyfit(AoSEffect(:,1),AoSEffect(:,3),8);
-        AoSFitCL=polyfit(AoSEffect(:,1),AoSEffect(:,4),8);
-        AoSFitCMroll=polyfit(AoSEffect(:,1),AoSEffect(:,5),8);
-        AoSFitCMpitch=polyfit(AoSEffect(:,1),AoSEffect(:,6),8);
-        AoSFitCMyaw=polyfit(AoSEffect(:,1),AoSEffect(:,7),8);
-        
-        CD=polyval(AoSFitCD,data.AoS)+AoAEffect(:,2);
-        Cy=polyval(AoSFitCy,data.AoS)+AoAEffect(:,3);
-        CL=polyval(AoSFitCL,data.AoS)+AoAEffect(:,4);
-        CMroll=polyval(AoSFitCMroll,data.AoS)+AoAEffect(:,5);
-        CMpitch=polyval(AoSFitCMpitch,data.AoS)+AoAEffect(:,6);
-        CMyaw=polyval(AoSFitCMyaw,data.AoS)+AoAEffect(:,7);
-        
-%         plot(data.AoS,data.CD)
-%         hold on
-        
-        data.CD=data.CD-CD;
-        data.CYaw=data.CYaw-Cy;
-        data.CL=data.CL-CL;
-        data.CMr=data.CMr-CMroll;
-        data.CMp=data.CMp-CMpitch;
-        data.CMp25c=data.CMp25c-CMpitch;
-        data.CMy=data.CMy-CMyaw;
-                
-
-        for idx=1:length(data.AoS)
-            dcm=angle2dcm(deg2rad(data.AoS(idx)), deg2rad(data.AoA(idx)), 0);
-            aero=[-data.CD(idx); data.CYaw(idx); -data.CL(idx)];
-            model=dcm*aero.*[-1; 1; -1];
-            data.CT(idx)=model(1);
-            data.CY(idx)=model(2);
-            data.CN(idx)=model(3);
-        end
-%         plot(data.AoS,data.CD)
-    end 
+    end
+   
     
     function data=removeModelOffjVar(data)
         modelOff=readtable('modelOffData.xlsx','VariableNamingRule','preserve');    % read model off data
@@ -425,18 +378,66 @@ methods (Static)
             data.CN(idx)=model(3);
         end
     end 
-    end   
+       
+     function data=removeModelOff(data)
+        modelOff=readtable('modelOffData.xlsx','VariableNamingRule','preserve');    % read model off data
+        AoAEffect=table2array(modelOff(8,2:8))-table2array(modelOff(6,2:8)); % effect of 2 deg aoa on forces
+        AoSEffect=modelOff{[1,5,7,9,11,13,15,17,21],11:17}; % forces at -10, -6, -4, -2, 0, 2, 4, 6, 10 for aos
+        
+%         order=3;
+        AoSFitCD=polyfit(AoSEffect(:,1),AoSEffect(:,2),8); % makes fit of forces in aero frame
+        AoSFitCy=polyfit(AoSEffect(:,1),AoSEffect(:,3),8);
+        AoSFitCL=polyfit(AoSEffect(:,1),AoSEffect(:,4),8);
+        AoSFitCMroll=polyfit(AoSEffect(:,1),AoSEffect(:,5),8);
+        AoSFitCMpitch=polyfit(AoSEffect(:,1),AoSEffect(:,6),8);
+        AoSFitCMyaw=polyfit(AoSEffect(:,1),AoSEffect(:,7),8);
+        
+%         figure(2)
+%         plot(data.AoS,data.CD)
+%         hold on
+%         plot(AoSEffect(:,1),AoSEffect(:,2))
+%         plot(data.AoS,polyval(AoSFitCD,data.AoS),'x')
+        
+        CD=polyval(AoSFitCD,data.AoS)+AoAEffect(:,2);
+        Cy=polyval(AoSFitCy,data.AoS)+AoAEffect(:,3);
+        CL=polyval(AoSFitCL,data.AoS)+AoAEffect(:,4);
+        CMroll=polyval(AoSFitCMroll,data.AoS)+AoAEffect(:,5);
+        CMpitch=polyval(AoSFitCMpitch,data.AoS)+AoAEffect(:,6);
+        CMyaw=polyval(AoSFitCMyaw,data.AoS)+AoAEffect(:,7);
+        
+%         plot(data.AoS,data.CD)
+%         hold on
+        
+        data.CD=data.CD-CD;
+        data.CYaw=data.CYaw-Cy;
+        data.CL=data.CL-CL;
+        data.CMr=data.CMr-CMroll;
+        data.CMp=data.CMp-CMpitch;
+        data.CMp25c=data.CMp25c-CMpitch;
+        data.CMy=data.CMy-CMyaw;
+                
 
-    function out=sideslipCorrection(data)
+        for idx=1:length(data.AoS)
+            dcm=angle2dcm(deg2rad(data.AoS(idx)), deg2rad(data.AoA(idx)), 0);
+            aero=[-data.CD(idx); data.CYaw(idx); -data.CL(idx)];
+            model=dcm*aero.*[-1; 1; -1];
+            data.CT(idx)=model(1);
+            data.CY(idx)=model(2);
+            data.CN(idx)=model(3);
+        end
+%         plot(data.AoS,data.CD)
+    end 
+
+    function data=sideslipCorrection(data)
         sigmaEff=4*6/3/pi*(0.01427/0.2032);
         B0=45; % pitch at r/R=0.75 (is given for r/R=0.7)
         dYdbeta = 4.25*sigmaEff./(1+2*sigmaEff)*sind(B0+3).*(pi*data.J_M1.^2./8+3*sqrt(pi.*data.J_M1.^2./8.*abs(data.dPb))./(8*sqrt(pi*data.J_M1.^2/8+2/3.*data.dPb)));
         dY=dYdbeta.*deg2rad(data.AoS);
         dyRef=8/pi./data.J_M1.^2.*pi/4*0.2032^2/0.2171696.*dY;
-        dyRef=8/pi./data.J_M1.^2.*pi/4.*dY;
+%         dyRef=8/pi./data.J_M1.^2.*pi/4.*dY;
 %         [data.CY data.CY-dyRef data.CY-8/pi./data.J_M1.^2.*pi/4*0.2032^2/0.2171696.*dY]
-        data.CY-dyRef;
-    end 
+        data.CY=data.CY-dyRef;
+    end
     
 end    
 end
