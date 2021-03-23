@@ -11,7 +11,10 @@ function dataStruct = load2Struct(measPath, tailOffPath)
     S           = b/2*(cT+cR);                          % reference area
     taper       = cT/cR;                                % taper ratio
     c           = 2*cR/3*(1+taper+taper^2)/(1+taper);   % MAC
+    % tail geometry
     Stail       = 0.0415;                               % tail area
+    ARTail      = 3.87;                                 % aspect ratio tail
+    spanTail    = 0.576;                                % span of tail
     % prop geometry
     D           = 0.2032;                               % propeller dia
     R           = D/2;                                  % propeller radius
@@ -54,5 +57,6 @@ function dataStruct = load2Struct(measPath, tailOffPath)
                  "tailoffAoS", dataTailOffAoS, "tunnelArea", tunnelArea,...
                  "tunnelWidth", tunnelWidth, "tunnelHeight", ... 
                  tunnelHeight, "epsSB", epsSB, "sTail", Stail, ...
-                 "eps", eps, "tau2Tail", tau2Tail, "dCmp25c", dCmp25c);
+                 "eps", eps, "tau2Tail", tau2Tail, "dCmp25c", dCmp25c, ...
+                 "spanTail", spanTail, "ARTail", ARTail);
 end
