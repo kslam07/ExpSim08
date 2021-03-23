@@ -105,6 +105,26 @@ methods (Static)
         rud020bPO.CY=rud020bPO.CY-polyval(fit20CY,rud020bPO.AoS);
         rud020bPO.CL=rud020bPO.CL-polyval(fit20CL,rud020bPO.AoS);
         rud020bPO.CD=rud020bPO.CD-polyval(fit20CD,rud020bPO.AoS);        
+        
+        subplot(1,2,1)
+        plot(propOff20.AoS,propOff20.CT)
+        hold on 
+        plot(rud020.AoS,rud020.CT)
+        plot(propOff20.AoS,polyval(fit20CT,propOff20.AoS))
+        title('v = 20')
+        xlabel('\beta')
+        ylabel('C_{Tref}')
+        
+               
+        subplot(1,2,2)
+        plot(propOff40.AoS,propOff40.CT)
+        hold on 
+        plot(rud040b.AoS,rud040b.CT)
+        plot(propOff40.AoS,polyval(fit40CT,propOff40.AoS))
+        title('v = 40')
+        xlabel('\beta')
+        ylabel('C_{Tref}')
+        
 %         plot(rud020bPO.AoS,rud020bPO.CT)
         rud040PO.CN=rud040PO.CN-polyval(fit40CN,rud040PO.AoS);
         rud040PO.CT=rud040PO.CT-polyval(fit40CT,rud040PO.AoS);
@@ -238,6 +258,7 @@ methods (Static)
 %         plot(data040.a.CT)
 
         
+
         dataStruct.i1.rud0=sortrows([data020.d; data020.c; data040.d; data040.c; datajVar.c],1);
         dataStruct.i1.rud5=sortrows([data520.d; data520.c; data540.d; data540.c],1);
         dataStruct.i1.rud10=sortrows([data1020.d; data1020.c; data1040.d; data1040.c],1);
@@ -250,26 +271,63 @@ methods (Static)
 %             dCN/da=
       
     %%
-    function thrustOut=thrustIter(data)
-        TEngine=-data.a.CT*0.5.*data.a.temp.*data.a.V.^2.*dataStruct.sRef/2; % force per engine
-        data.a.CT*dataStruct.sRef/pi*4/dataStruct.Dprop^2/2;
-        TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
-        CT=TC.*data.a.J_M1.^2*pi/8; % CT for engine    
-        TCi=TC;
-        for idx=1:1:50
-            uRatio=1+0.6*2*0.2032/0.576*(TCi.*sqrt((sqrt(1+TCi)+1)./(2*sqrt(1+TCi))));
-            dcl=data.b.CN.*(1-1./uRatio)*dataStruct.sTail/dataStruct.sRef; % computes increase in thrust from tail wing drag
-            dCT=dcl/pi/3.87; % increased drag of tail
-            TCi=TC+dCT;
-        end
-        TCi;
+        function thrustOut=thrustIter(data)
+            
+            % prop off - prop on; initial thrust estimate
+            TEngine=-data.a.CT*0.5.*data.a.temp.*data.a.V.^2.*dataStruct.sRef/2; % force per engine
+%             data.a.CT*dataStruct.sRef/pi*4/dataStruct.Dprop^2/2;
+            TC=TEngine./(0.5*data.a.temp.*data.a.V.^2*pi/4*dataStruct.Dprop^2);  % TC for engine
+            CT=TC.*data.a.J_M1.^2*pi/8; % CT for engine    
+            TCi=TC;
+%             res = 1;
+            for idx=1:1:50
+% %                 plot(data.c.AoS, TCi);
+% %                 hold on
+%                 % k=0.6 (constant found by Eckert)
+%                 % qE/qinf; spanTail = 0.576 [m]
+                uRatio=1+0.6*2*dataStruct.Dprop/0.576*...
+                    (TCi.*sqrt((sqrt(1+TCi)+1)./(2*sqrt(1+TCi))));
+% =========================== THOMAS' APPROACH ===========================
+%               computes increase in thrust from tail wing drag
+                dcl=data.b.CN.*(1-1./uRatio)*dataStruct.sTail/ ...
+                    dataStruct.sRef;
+                dCT=dcl/pi/3.87; % increased drag of tail
+                TCi=TC+dCT;
+%                 % compute induced drag over wetted area HT
+%                 dCD = data.b.CL.^2./(pi*3.87).*(uRatio.^2-1);
+%                 
+%                 % compute CL_TC=0 and CD_TC=0 (assume model off values)
+%                 CL_TC0 = data.b.CL .* 1./uRatio;
+%                 CD_TC0 = data.b.CD + dCD;
+%                 
+%                 % compute thrust using TC=0 values
+%                 dcm = angle2dcm(deg2rad(data.c.AoS), deg2rad(data.c.AoA), ...
+%                     zeros(size(data.c.AoS)));
+%                 aero=[-CD_TC0, data.c.CYaw, -CL_TC0]';
+%                 
+%                 % convert CL, CD, Cyaw to CT, CY, CN
+%                 coeffModels = zeros(size(aero));
+%                 for i = 1:length(data.c.AoS)
+%                     coeffModels(:,i)=dcm(:,:,i) * aero(:,i) .* [-1; 1; -1];
+%                 end
+%                 
+%                 % compute new thrust coefficient
+%                 TCi = data.c.CT - coeffModels(1,:)';
+%                 % change basis
+%                 TCi = TCi * dataStruct.sRef / (pi/4*dataStruct.Dprop^2);
+% %                 TCi ./ res
+% %                 res = TCi;
+            end
+%             TCi;
 %             TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2; % nondim with 
 %             data.a.CT=TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
+            
         data.a.CT=TCi;
-%         plot(data.a.AoS,TCi)
         data.c.dPb=TCi;
 %             data.c.dPb=-TCi/dataStruct.sRef*pi/4*dataStruct.Dprop^2*2;
-        tcfit=polyfit(data.c.AoS,TCi,length(unique(data.c.AoS))-1);
+
+            % use 3rd order polynomial fit
+        tcfit=polyfit(data.c.AoS,TCi,3);
 %             plot(data.c.AoS,data.c.dPb)
 %             hold on
 %             plot(data.d.AoS,polyval(tcfit,data.d.AoS))
