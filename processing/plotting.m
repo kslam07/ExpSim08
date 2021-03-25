@@ -35,10 +35,6 @@ function [] = plotting(data)
     
     %% loop
     err=0.05;
-    
-    % col: 0, 5, 10 delta_r 
-    % row: v=20 & 1 engine | v=20 & 2 engine | v=40 & 1 engine | ...
-%     zeros(N, 3);
     CYArr20 = [];
     CYArr20b = [];
     CYArr40 = [];
@@ -84,13 +80,10 @@ function [] = plotting(data)
             CY1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
             CYArr40(iAOS,:) = [CY040.CY CY540.CY CY1040.CY];
         end
-        
-
             CY040b = rud040(abs(AOS(iAOS)-rud040b.AoS)<err, :);
             CY540b = rud540(abs(AOS(iAOS)-rud540b.AoS)<err, :);
             CY1040b = rud1040(abs(AOS(iAOS)-rud1040b.AoS)<err, :);
             CYArr40b(iAOS,:) = [CY040b.CY CY540b.CY CY1040b.CY];
-        
     end
     
     dCYddelta20 = [];
@@ -98,48 +91,299 @@ function [] = plotting(data)
     dCYddelta40 = [];
     dCYddelta40b = [];
     
-    for idx=1:length(CYArr20)
+    for idx=1:length(CYArr20) % fit dCyddelta for different delta
         fit=polyfit([0 5 10], CYArr20(idx,:),1);
         dCYddelta20(idx)=fit(1);
+        CY0d20(idx)=fit(2);
     end
     for idx=1:length(CYArr20b)
         fit=polyfit([0 5 10], CYArr20b(idx,:),1);
         dCYddelta20b(idx)=fit(1);
+        CY0d20b(idx)=fit(2);
     end    
     for idx=1:length(CYArr40)
         fit=polyfit([0 5 10], CYArr40(idx,:),1);
         dCYddelta40(idx)=fit(1);
+        CY0d40(idx)=fit(2);
     end
     for idx=1:length(CYArr40b)
         fit=polyfit([0 5 10], CYArr40b(idx,:),1);
         dCYddelta40b(idx)=fit(1);
-    end       
+        CY0d40b(idx)=fit(2);
+    end
     
-    
-    dcydd20=mean(dCYddelta20);
+    dcydd20=mean(dCYddelta20); % average value for different delta_r
     dcydd20b=mean(dCYddelta20b);
     dcydd40=mean(dCYddelta40);
     dcydd40b=mean(dCYddelta40b);
     
-    dcydb20=polyfit(rud020.AoS,rud020.CY,1);
-    dcydb20b=polyfit(rud020b.AoS,rud020b.CY,1);
-    dcydb40=polyfit(rud040.AoS,rud040.CY,1);
-    dcydb40b=polyfit(rud040b.AoS,rud040b.CY,1);
+    cy020=mean(CY0d20);
+    cy020b=mean(CY0d20b);
+    cy040=mean(CY0d40);
+    cy040b=mean(CY0d40b);
     
+    dcydb020=polyfit(rud020.AoS,rud020.CY,3); % polyfit for CY
+    dcydb020b=polyfit(rud020b.AoS,rud020b.CY,3);
+    dcydb040=polyfit(rud040.AoS,rud040.CY,3);
+    dcydb040b=polyfit(rud040b.AoS,rud040b.CY,3);
     
-%     subplot(2,2,1)
-%     scatter([-10 -6:2:6 10],dCYddelta20)
+    dcydb520=polyfit(rud520.AoS,rud520.CY,3);
+    dcydb520b=polyfit(rud520b.AoS,rud520b.CY,3);
+    dcydb540=polyfit(rud540.AoS,rud540.CY,3);
+    dcydb540b=polyfit(rud540b.AoS,rud540b.CY,3);
+    
+    dcydb1020=polyfit(rud1020.AoS,rud1020.CY,3);
+    dcydb1020b=polyfit(rud1020b.AoS,rud1020b.CY,3);
+    dcydb1040=polyfit(rud1040.AoS,rud1040.CY,3);
+    dcydb1040b=polyfit(rud1040b.AoS,rud1040b.CY,3);
+    
+    dcydb20=mean([dcydb020(3) dcydb520(3) dcydb1020(3)]); % average dCYdbeta for different delta_r
+    dcydb20b=mean([dcydb020b(3) dcydb520b(3) dcydb1020b(3)]);
+    dcydb40=mean([dcydb040(3) dcydb540(3) dcydb1040(3)]);
+    dcydb40b=mean([dcydb040b(3) dcydb540b(3) dcydb1040b(3)]);
+    
+    CY0b20=mean([dcydb020(4) dcydb520(4) dcydb1020(4)]); % average dCYdbeta for different delta_r
+    CY0b20b=mean([dcydb020b(4) dcydb520b(4) dcydb1020b(4)]);
+    CY0b40=mean([dcydb040(4) dcydb540(4) dcydb1040(4)]);
+    CY0b40b=mean([dcydb040b(4) dcydb540b(4) dcydb1040b(4)]);
+    
+    rudder40=(-(CY0b40+CY0d40)-dcydb40.*AOS)/dcydd40
+    rudder40b=(-(CY0b40b+CY0d40b)-dcydb40b.*AOS)/dcydd40b
+    
+%     plot(AOS,dcydb40.*AOS+dCYddelta40*10)
+    
+%     subplot(2,2,1) % plot for cy, beta
+%     scatter(rud020.AoS,rud020.CY)
+%     xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=20, OEI')
 %     hold on
-%     yline(dcydd20)
+%     yline(dcydb20(3))
 %     subplot(2,2,2)
-%     scatter([-10 -6:2:6 10],dCYddelta20b)
-%     yline(dcydd20b)
+%     scatter(rud020b.AoS,rud020b.CY)
+%     yline(dcydb20b(3))
+%     xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=20')
 %     subplot(2,2,3)
-%     scatter([-10 -6:2:6 10],dCYddelta40)
-%     yline(dcydd40)
+%     scatter(rud040.AoS,rud040.CY)
+%     yline(dcydb40(3))
+%     xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=40, OEI')
 %     subplot(2,2,4)
-%     scatter([-10 -6:2:6 10],dCYddelta40b)
-%     yline(dcydd40b)
+%     scatter(rud040b.AoS,rud040b.CY)
+%     yline(dcydb40b(3))
+%      xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=40')
+%     sgtitle('dC_Y/d\beta')
+
+    
+    subplot(2,2,1)
+    scatter([-10 -6:2:6 10],dCYddelta20)
+    xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=20, OEI')
+    hold on
+    yline(dcydd20)
+    subplot(2,2,2)
+    scatter([-10 -6:2:6 10],dCYddelta20b)
+    yline(dcydd20b)
+    xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=20')
+    subplot(2,2,3)
+    scatter([-10 -6:2:6 10],dCYddelta40)
+    yline(dcydd40)
+    xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=40, OEI')
+    subplot(2,2,4)
+    scatter([-10 -6:2:6 10],dCYddelta40b)
+    yline(dcydd40b)
+     xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=40')
+    sgtitle('dC_Y/d\delta_r')
+    
+
+    %%
+        %% loop
+    err=0.05;
+    CMyArr20 = [];  % setup arrays for CMy for each engine and velocity setting
+    CMyArr20b = [];
+    CMyArr40 = [];
+    CMyArr40b = [];
+    
+    AOS = [-10 -6:2:6 10];
+    for iAOS = 1:length(AOS)
+        
+        % Put AoS values for different rudder deflection in same row
+        CMy020 = rud020(abs(AOS(iAOS)-rud020.AoS)<err, :);
+        CMy520 = rud520(abs(AOS(iAOS)-rud520.AoS)<err, :);
+        CMy1020 = rud1020(abs(AOS(iAOS)-rud1020.AoS)<err, :);
+        CMyArr20(iAOS,:) = [CMy020.CMy CMy520.CMy CMy1020.CMy];
+        
+        if AOS(iAOS)==-2
+            CMy020b = rud020b(4, :);
+            CMy520b = rud520b(abs(AOS(iAOS)-rud520b.AoS)<err, :);
+            CMy1020b = rud1020b(abs(AOS(iAOS)-rud1020b.AoS)<err, :);
+            CMyArr20b(iAOS,:) = [CMy020b.CMy CMy520b.CMy CMy1020b.CMy];
+            
+        elseif AOS(iAOS)==0
+            CMyArr20b(iAOS,:) = [0 0 0];
+        else
+            CMy020b = rud020b(abs(AOS(iAOS)-rud020b.AoS)<err, :);
+            CMy520b = rud520b(abs(AOS(iAOS)-rud520b.AoS)<err, :);
+            CMy1020b = rud1020b(abs(AOS(iAOS)-rud1020b.AoS)<err, :);
+            CMyArr20b(iAOS,:) = [CMy020b.CMy CMy520b.CMy CMy1020b.CMy];
+        end
+        
+        if AOS(iAOS)==-10
+            CMy040 = rud040(1, :);
+            CMy540 = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
+            CMy1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
+            CMyArr40(iAOS,:) = [CMy040.CMy CMy540.CMy CMy1040.CMy];
+        elseif AOS(iAOS)==-4
+            CMy040b = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
+            CMy540b = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
+            CMy1040b = rud1040(3, :);
+            CMyArr40b(iAOS,:) = [CMy040b.CMy CMy540b.CMy CMy1040b.CMy];
+        else
+            CMy040 = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
+            CMy540 = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
+            CMy1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
+            CMyArr40(iAOS,:) = [CMy040.CMy CMy540.CMy CMy1040.CMy];
+        end
+            CMy040b = rud040(abs(AOS(iAOS)-rud040b.AoS)<err, :);
+            CMy540b = rud540(abs(AOS(iAOS)-rud540b.AoS)<err, :);
+            CMy1040b = rud1040(abs(AOS(iAOS)-rud1040b.AoS)<err, :);
+            CMyArr40b(iAOS,:) = [CMy040b.CMy CMy540b.CMy CMy1040b.CMy];
+        
+    end
+    
+    dCMyddelta20 = [];  % empty array for dCMyddelta
+    dCMyddelta20b = [];
+    dCMyddelta40 = [];
+    dCMyddelta40b = [];
+    
+
+    for idx=1:length(CMyArr20) % fit dCMyddelta for different delta
+        fit=polyfit([0 5 10], CMyArr20(idx,:),1);
+        dCMyddelta20(idx)=fit(1);   % value for dCMyddelta
+        CMy0d20(idx)=fit(2);    % value for CMy0
+    end
+    for idx=1:length(CMyArr20b)
+        fit=polyfit([0 5 10], CMyArr20b(idx,:),1);
+        dCMyddelta20b(idx)=fit(1);
+        CMy0d20(idx)=fit(2);
+    end    
+    for idx=1:length(CMyArr40)
+        fit=polyfit([0 5 10], CMyArr40(idx,:),1);
+        dCMyddelta40(idx)=fit(1);
+        CMy0d4(idx)=fit(2);
+    end
+    for idx=1:length(CMyArr40b)
+        fit=polyfit([0 5 10], CMyArr40b(idx,:),1);
+        dCMyddelta40b(idx)=fit(1);
+        CMy0d40b(idx)=fit(2);
+    end
+    
+    dCMydd20=mean(dCMyddelta20); % average value for different delta_r
+    dCMydd20b=mean(dCMyddelta20b);
+    dCMydd40=mean(dCMyddelta40);
+    dCMydd40b=mean(dCMyddelta40b);
+    
+    cmy0d20=mean(CY0d20);    % average value for Cmy0
+    cmy0d20b=mean(CY0d20b);
+    cmy0d40=mean(CY0d40);
+    cmy0d40b=mean(CY0d40b);
+    
+    dCMydb020=polyfit(rud020.AoS,rud020.CMy,3); % polyfit for CMy
+    dCMydb020b=polyfit(rud020b.AoS,rud020b.CMy,3);
+    dCMydb040=polyfit(rud040.AoS,rud040.CMy,3);
+    dCMydb040b=polyfit(rud040b.AoS,rud040b.CMy,3);
+    
+    dCMydb520=polyfit(rud520.AoS,rud520.CMy,3);
+    dCMydb520b=polyfit(rud520b.AoS,rud520b.CMy,3);
+    dCMydb540=polyfit(rud540.AoS,rud540.CMy,3);
+    dCMydb540b=polyfit(rud540b.AoS,rud540b.CMy,3);
+    
+    dCMydb1020=polyfit(rud1020.AoS,rud1020.CMy,3);
+    dCMydb1020b=polyfit(rud1020b.AoS,rud1020b.CMy,3);
+    dCMydb1040=polyfit(rud1040.AoS,rud1040.CMy,3);
+    dCMydb1040b=polyfit(rud1040b.AoS,rud1040b.CMy,3);
+    
+    dCMydb20=mean([dCMydb020(3) dCMydb520(3) dCMydb1020(3)]); % average dCMydbeta for different delta_r
+    dCMydb20b=mean([dCMydb020b(3) dCMydb520b(3) dCMydb1020b(3)]);
+    dCMydb40=mean([dCMydb040(3) dCMydb540(3) dCMydb1040(3)]);
+    dCMydb40b=mean([dCMydb040b(3) dCMydb540b(3) dCMydb1040b(3)]);
+    
+    CMy0b20=mean([dCMydb020(4) dCMydb520(4) dCMydb1020(4)]); % average dCMydbeta for different delta_r
+    CMy0b20b=mean([dCMydb020b(4) dCMydb520b(4) dCMydb1020b(4)]);
+    CMy0b40=mean([dCMydb040(4) dCMydb540(4) dCMydb1040(4)]);
+    CMy0b40b=mean([dCMydb040b(4) dCMydb540b(4) dCMydb1040b(4)]);
+    
+    rudder40=(-(CMy0b40+cmy0d40)-dCMydb40.*AOS)/dCMydd40;
+    rudder40b=(-(CMy0b40b+cmy0d40b)-dCMydb40b.*AOS)/dCMydd40b;
+    
+%     plot(AOS,dcydb40.*AOS+dCYddelta40*10)
+    
+%     subplot(2,2,1) % plot for cy, beta
+%     scatter(rud020.AoS,rud020.CY)
+%     xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=20, OEI')
+%     hold on
+%     yline(dcydb20(3))
+%     subplot(2,2,2)
+%     scatter(rud020b.AoS,rud020b.CY)
+%     yline(dcydb20b(3))
+%     xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=20')
+%     subplot(2,2,3)
+%     scatter(rud040.AoS,rud040.CY)
+%     yline(dcydb40(3))
+%     xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=40, OEI')
+%     subplot(2,2,4)
+%     scatter(rud040b.AoS,rud040b.CY)
+%     yline(dcydb40b(3))
+%      xlabel('\beta')
+%     ylabel('dC_Y/d\beta')
+%     title('v=40')
+%     sgtitle('dC_Y/d\beta')
+
+    
+    subplot(2,2,1)
+    scatter([-10 -6:2:6 10],dCYddelta20)
+    xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=20, OEI')
+    hold on
+    yline(dcydd20)
+    subplot(2,2,2)
+    scatter([-10 -6:2:6 10],dCYddelta20b)
+    yline(dcydd20b)
+    xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=20')
+    subplot(2,2,3)
+    scatter([-10 -6:2:6 10],dCYddelta40)
+    yline(dcydd40)
+    xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=40, OEI')
+    subplot(2,2,4)
+    scatter([-10 -6:2:6 10],dCYddelta40b)
+    yline(dcydd40b)
+     xlabel('\beta')
+    ylabel('dC_Y/d\delta_r')
+    title('v=40')
+    sgtitle('dC_Y/d\delta_r')
     
     
     %% Plotting
