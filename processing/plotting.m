@@ -375,6 +375,9 @@ function plotting(dataStruct, nameMeas)
     legend
     grid
     
+    %% plots for trimming
+
+    
 %     plot(AOS,dcydb40.*AOS+dCYddelta40*10)
     
 %     subplot(2,2,1) % plot for cy, beta
@@ -403,7 +406,6 @@ function plotting(dataStruct, nameMeas)
 %     ylabel('dC_Y/d\beta')
 %     title('v=40')
 %     sgtitle('dC_Y/d\beta')
-
     
     subplot(2,2,1)
     scatter([-10 -6:2:6 10],dCYddelta20)
@@ -519,33 +521,8 @@ function plotting(dataStruct, nameMeas)
     xlabel('\beta')
     ylabel('C_{My}')
     grid on
-    
-    figure(3) % figure for thrust coefficient
-    t = tiledlayout(1,2,'TileSpacing','Compact','Padding','Compact');
-    nexttile
-    plot(rud020b.AoS,rud020b.dPb)
-    hold on
-    plot(rud520b.AoS,rud520b.dPb)
-    plot(rud1020b.AoS,rud1020b.dPb)
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
-    scatter(rud020.AoS,rud020.dPb)
-    hold on
-    scatter(rud520.AoS,rud520.dPb)
-    scatter(rud1020.AoS,rud1020.dPb)
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
-    nexttile
-    plot(rud040b.AoS,rud040b.dPb)
-    hold on
-    plot(rud540b.AoS,rud540b.dPb)
-    plot(rud1040b.AoS,rud1040b.dPb)
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
-    plot(rud040.AoS,rud040.dPb,'--')
-    hold on
-    plot(rud540.AoS,rud540.dPb,'--')
-    plot(rud1040.AoS,rud1040.dPb,'--')
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
-    
-    figure(4) % figure for rudder stability
+        
+    figure(3) % figure for rudder stability
     order=1;
     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
     nexttile
@@ -595,7 +572,45 @@ function plotting(dataStruct, nameMeas)
     xlabel('\beta')
     ylabel('C_Y')
     
-    function delta_r = findTrimAngle(cstLst, betaLst, dyddrLst, ...
+figure(4) % figure for thrust coefficient
+    t = tiledlayout(1,2,'TileSpacing','Compact','Padding','Compact');
+    nexttile
+    plot(rud020b.AoS,rud020b.dPb,'o','LineStyle','-')
+    hold on
+    plot(rud520b.AoS,rud520b.dPb,'o','LineStyle','-')
+    plot(rud1020b.AoS,rud1020b.dPb,'o','LineStyle','-')
+    plot(rud020.AoS,rud020.dPb,'x','LineStyle','--')
+    hold on
+    plot(rud520.AoS,rud520.dPb,'x','LineStyle','--')
+    plot(rud1020.AoS,rud1020.dPb,'x','LineStyle','--')
+    legend('\delta_r=0','\delta_r=5','\delta_r=10','\delta_{r,OEI}=0','\delta_{r,OEI}=5','\delta_{r,OEI}=10','Location','north')
+    xlabel('\beta')
+    ylabel('T_C')
+    xlim([-10 10])
+    title('v = 20 m/s')
+    grid on
+    nexttile
+    plot(rud040b.AoS,rud040b.dPb,'o','LineStyle','-')
+    hold on
+    plot(rud540b.AoS,rud540b.dPb,'o','LineStyle','-')
+    plot(rud1040b.AoS,rud1040b.dPb,'o','LineStyle','-')
+    plot(rud040.AoS,rud040.dPb,'x','LineStyle','--')
+    hold on
+    plot(rud540.AoS,rud540.dPb,'x','LineStyle','--')
+    plot(rud1040.AoS,rud1040.dPb,'x','LineStyle','--')
+    legend('\delta_r=0','\delta_r=5','\delta_r=10','\delta_{r,OEI}=0','\delta_{r,OEI}=5','\delta_{r,OEI}=10','Location','north')
+    xlabel('\beta')
+    ylabel('T_C')
+    xlim([-10 10])
+    title('v = 40 m/s')
+    grid on
+    
+%     figure(5)
+%     plot(jVar.J_M1,jVar.dPb.*jVar.J_M1.^2*pi/8,'x')
+%     hold on
+%     plot([2.1 1.8 1.6], [0.115 0.235 0.3073])
+    
+    function beta = findBeta4TrimAngle(cstLst, betaLst, dyddrLst, ...
             dydbetaLst)
        delta_r = (-dydbetaLst.*betaLst-cstLst)./(dyddrLst);
     end
