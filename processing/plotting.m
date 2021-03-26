@@ -341,10 +341,10 @@ function [] = plotting(data)
     dCMydb40b   = mean([dCMydb040b(3) dCMydb540b(3) dCMydb1040b(3)]);
     
     % dCMydbeta|0 for different delta_r
-    CMy0b20     = dCMydb020(4) + CMy0d20;
-    CMy0b20b    = dCMydb020b(4)+ CMy0d20b;
-    CMy0b40     = dCMydb040(4) + CMy0d40;
-    CMy0b40b    = dCMydb040b(4)+ CMy0d40b;
+    CMy0b20     = rud020(abs(rud020.AoS) < 0.2, end).CMy;%dCMydb020(4) + CMy0d20;
+    CMy0b20b    = rud020b(abs(rud020b.AoS) < 0.2, end).CMy;%dCMydb020b(4)+ CMy0d20b;
+    CMy0b40     = rud040(abs(rud040.AoS) < 0.2, end).CMy;%dCMydb040(4) + CMy0d40;
+    CMy0b40b    = rud040b(abs(rud040b.AoS) < 0.2, end).CMy;%dCMydb040b(4)+ CMy0d40b;
     
     % compute the corresponding sideslip for the given rudder angle and
     % configuration. You want to find the trim based on the steady-state
@@ -358,7 +358,7 @@ function [] = plotting(data)
     AoSTrim40 = findBeta4TrimAngle(CMy0b40, aosspace, dCMydd40, dCMydb40);
     % if you actually insert the const. term, then both engines on require
     % more trimming then OEI. Noise?
-    AoSTrim40b = findBeta4TrimAngle(0, aosspace, dCMydd40b, dCMydb40b);
+    AoSTrim40b = findBeta4TrimAngle(CMy0b40b, aosspace, dCMydd40b, dCMydb40b);
     
     figure("defaultAxesFontSize", 14)
     hold on
