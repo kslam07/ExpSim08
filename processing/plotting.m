@@ -523,11 +523,21 @@ function [] = plotting(data)
     plot(rud520b.AoS,rud520b.dPb)
     plot(rud1020b.AoS,rud1020b.dPb)
     legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
+    scatter(rud020.AoS,rud020.dPb)
+    hold on
+    scatter(rud520.AoS,rud520.dPb)
+    scatter(rud1020.AoS,rud1020.dPb)
+    legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
     nexttile
     plot(rud040b.AoS,rud040b.dPb)
     hold on
     plot(rud540b.AoS,rud540b.dPb)
     plot(rud1040b.AoS,rud1040b.dPb)
+    legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
+    plot(rud040.AoS,rud040.dPb,'--')
+    hold on
+    plot(rud540.AoS,rud540.dPb,'--')
+    plot(rud1040.AoS,rud1040.dPb,'--')
     legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
     
     figure(4) % figure for rudder stability
