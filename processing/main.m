@@ -23,7 +23,7 @@ resThrust = 1;
 data = corrPropoff(data);
 
 %% correct tail off data using wall corrections
-
+% data = corrPropoff(data);
 %% Correct model off data
 data.i0_org = data.i0;
 
