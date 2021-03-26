@@ -117,7 +117,7 @@ data = subtractTailOff(data, "i0");
 %% TODO remove model off data from measurements
 data = removeModelOff(data, "i0");
 
-plotting(data)
+%plotting(data)
 
 % Cn and Cy
 %% Plots to show wall correction effects

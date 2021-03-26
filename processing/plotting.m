@@ -1,38 +1,43 @@
-function [] = plotting(data)
-    %% Get data indices to efficiently sort row
-    idx020 = data.i2.rud0.V==20 & data.i0.rud0.iM2==0 & data.i0.rud0.J_M1>2;
-    idx020b = data.i2.rud0.V==20 & data.i0.rud0.iM2~=0 & data.i0.rud0.J_M1>2;
-    idx040 = data.i2.rud0.V==40 & data.i0.rud0.iM2==0 & data.i0.rud0.J_M1>2;
-    idx040b = data.i2.rud0.V==40 & data.i0.rud0.iM2~=0 & data.i0.rud0.J_M1>2;
-    idxJVar = data.i0.rud0.iM2~=0 & abs(data.i0.rud0.AoS)<1.5;
+function plotting(dataStruct, nameMeas)
     
-    idx520 = data.i2.rud5.V==20 & data.i0.rud5.iM2==0;
-    idx520b = data.i2.rud5.V==20 & data.i0.rud5.iM2~=0;
-    idx540 = data.i2.rud5.V==40 & data.i0.rud5.iM2==0;
-    idx540b = data.i2.rud5.V==40 & data.i0.rud5.iM2~=0;
+    dataOrig = dataStruct.i0_org;
+    % tail or measurements
+    dataMeas = dataStruct.(nameMeas);
 
-    idx1020 = data.i2.rud10.V==20 & data.i0.rud10.iM2==0;
-    idx1020b = data.i2.rud10.V==20 & data.i0.rud10.iM2~=0;
-    idx1040 = data.i2.rud10.V==40 & data.i0.rud10.iM2==0;
-    idx1040b = data.i2.rud10.V==40 & data.i0.rud10.iM2~=0;
+    %% Get data indices to efficiently sort row
+    idx020 = dataOrig.rud0.V==20 & dataStruct.i0.rud0.iM2==0 & dataOrig.rud0.J_M1>2;
+    idx020b = dataOrig.rud0.V==20 & dataOrig.rud0.iM2~=0 & dataOrig.rud0.J_M1>2;
+    idx040 = dataOrig.rud0.V==40 & dataOrig.rud0.iM2==0 & dataOrig.rud0.J_M1>2;
+    idx040b = dataOrig.rud0.V==40 & dataOrig.rud0.iM2~=0 & dataOrig.rud0.J_M1>2;
+    idxJVar = dataOrig.rud0.iM2~=0 & abs(dataOrig.rud0.AoS)<1.5;
+    
+    idx520 = dataOrig.rud5.V==20 & dataOrig.rud5.iM2==0;
+    idx520b = dataOrig.rud5.V==20 & dataOrig.rud5.iM2~=0;
+    idx540 = dataOrig.rud5.V==40 & dataOrig.rud5.iM2==0;
+    idx540b = dataOrig.rud5.V==40 & dataOrig.rud5.iM2~=0;
+
+    idx1020 = dataOrig.rud10.V==20 & dataOrig.rud10.iM2==0;
+    idx1020b = dataOrig.rud10.V==20 & dataOrig.rud10.iM2~=0;
+    idx1040 = dataOrig.rud10.V==40 & dataOrig.rud10.iM2==0;
+    idx1040b = dataOrig.rud10.V==40 & dataOrig.rud10.iM2~=0;
     
     %% Sort rows based on indices
-    jVar=sortrows(data.i0.rud0(idxJVar,:),'AoS');
+    jVar=sortrows(dataMeas.rud0(idxJVar,:),'AoS');
     
-    rud020=sortrows(data.i0.rud0(idx020,:),'AoS');
-    rud020b=sortrows(data.i0.rud0(idx020b,:),'AoS');
-    rud040=sortrows(data.i0.rud0(idx040,:),'AoS');
-    rud040b=sortrows(data.i0.rud0(idx040b,:),'AoS');
+    rud020=sortrows(dataMeas.rud0(idx020,:),'AoS');
+    rud020b=sortrows(dataMeas.rud0(idx020b,:),'AoS');
+    rud040=sortrows(dataMeas.rud0(idx040,:),'AoS');
+    rud040b=sortrows(dataMeas.rud0(idx040b,:),'AoS');
     
-    rud520=sortrows(data.i0.rud5(idx520,:),'AoS');
-    rud520b=sortrows(data.i0.rud5(idx520b,:),'AoS');
-    rud540=sortrows(data.i0.rud5(idx540,:),'AoS');
-    rud540b=sortrows(data.i0.rud5(idx540b,:),'AoS');
+    rud520=sortrows(dataMeas.rud5(idx520,:),'AoS');
+    rud520b=sortrows(dataMeas.rud5(idx520b,:),'AoS');
+    rud540=sortrows(dataMeas.rud5(idx540,:),'AoS');
+    rud540b=sortrows(dataMeas.rud5(idx540b,:),'AoS');
     
-    rud1020=sortrows(data.i0.rud10(idx1020,:),'AoS');
-    rud1020b=sortrows(data.i0.rud10(idx1020b,:),'AoS');
-    rud1040=sortrows(data.i0.rud10(idx1040,:),'AoS');
-    rud1040b=sortrows(data.i0.rud10(idx1040b,:),'AoS');
+    rud1020=sortrows(dataMeas.rud10(idx1020,:),'AoS');
+    rud1020b=sortrows(dataMeas.rud10(idx1020b,:),'AoS');
+    rud1040=sortrows(dataMeas.rud10(idx1040,:),'AoS');
+    rud1040b=sortrows(dataMeas.rud10(idx1040b,:),'AoS');
 
     err=0.05;
     CYArr20 = [];
@@ -52,40 +57,44 @@ function [] = plotting(data)
         %% screen data
         % exceptions; multiple data points @ aos = -2
         if AOS(iAOS)==-2
-            CY020b = rud020b(4, :);
+            CY020b = rud020b(abs(AOS(iAOS)-rud020b.AoS)<err, :);
             CY520b = rud520b(abs(AOS(iAOS)-rud520b.AoS)<err, :);
             CY1020b = rud1020b(abs(AOS(iAOS)-rud1020b.AoS)<err, :);
-            CYArr20b(iAOS,:) = [CY020b.CY CY520b.CY CY1020b.CY];
-            
+            temp = [AOS(iAOS) mean(CY020b.CY) CY520b.CY CY1020b.CY];
+            CYArr20b = [CYArr20b; temp];
         elseif AOS(iAOS)==0
-            CYArr20b(iAOS,:) = [0 0 0];
+            % do nothing
         else
             CY020b = rud020b(abs(AOS(iAOS)-rud020b.AoS)<err, :);
             CY520b = rud520b(abs(AOS(iAOS)-rud520b.AoS)<err, :);
             CY1020b = rud1020b(abs(AOS(iAOS)-rud1020b.AoS)<err, :);
-            CYArr20b(iAOS,:) = [CY020b.CY CY520b.CY CY1020b.CY];
+            temp = [AOS(iAOS) CY020b.CY CY520b.CY CY1020b.CY];
+            CYArr20b = [CYArr20b; temp];
         end
         
         if AOS(iAOS)==-10
-            CY040 = rud040(1, :);
+            CY040 = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
             CY540 = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
             CY1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
-            CYArr40(iAOS,:) = [CY040.CY CY540.CY CY1040.CY];
-        elseif AOS(iAOS)==-4
+            CYArr40(iAOS,:) = [mean(CY040.CY) CY540.CY CY1040.CY];
+        else
+            CY040 = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
+            CY540 = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
+            CY1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
+            CYArr40(iAOS,:) = [CY040.CY CY540.CY mean(CY1040.CY)];
+        end
+        
+        if AOS(iAOS)==-4
             CY040b = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
             CY540b = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
             CY1040b = rud1040(3, :);
             CYArr40b(iAOS,:) = [CY040b.CY CY540b.CY CY1040b.CY];
         else
-            CY040 = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
-            CY540 = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
-            CY1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
-            CYArr40(iAOS,:) = [CY040.CY CY540.CY CY1040.CY];
-        end
             CY040b = rud040(abs(AOS(iAOS)-rud040b.AoS)<err, :);
             CY540b = rud540(abs(AOS(iAOS)-rud540b.AoS)<err, :);
             CY1040b = rud1040(abs(AOS(iAOS)-rud1040b.AoS)<err, :);
             CYArr40b(iAOS,:) = [CY040b.CY CY540b.CY CY1040b.CY];
+        end
     end
     
     %% compute the 1st order derivatives
@@ -102,7 +111,7 @@ function [] = plotting(data)
         CY0d20(idx)=fit(2);                         % cst. term
     end
     for idx=1:length(CYArr20b)
-        fit=polyfit([0 5 10], CYArr20b(idx,:),1);
+        fit=polyfit([0 5 10], CYArr20b(idx,2:end),1);
         dCYddelta20b(idx)=fit(1);
         CY0d20b(idx)=fit(2);
     end    
@@ -119,16 +128,6 @@ function [] = plotting(data)
     
     % average value of dCy/d(delta_r) for varying sideslips
     % assumption: dCy/d(delta_r) does not vary that much for -10<beta<10
-    dcydd20=mean(dCYddelta20);
-    dcydd20b=mean(dCYddelta20b);
-    dcydd40=mean(dCYddelta40);
-    dcydd40b=mean(dCYddelta40b);
-    
-    % take average of CY0 (cst. term) in TSE
-    cy020=mean(CY0d20);
-    cy020b=mean(CY0d20b);
-    cy040=mean(CY0d40);
-    cy040b=mean(CY0d40b);
     
 % ====================== COMPUTE dCy/d(beta) ==============================
     dcydb020=polyfit(rud020.AoS,rud020.CY,3); % polyfit for CY
@@ -193,22 +192,22 @@ function [] = plotting(data)
     ylabel('dC_Y/d\delta_r')
     title('v=20, OEI')
     hold on
-    yline(dcydd20)
+%     yline(dcydd20)
     subplot(2,2,2)
-    scatter([-10 -6:2:6 10],dCYddelta20b)
-    yline(dcydd20b)
+    scatter([-10 -6:2:-2 2:2:6 10],dCYddelta20b)
+%     yline(dcydd20b)
     xlabel('\beta')
     ylabel('dC_Y/d\delta_r')
     title('v=20')
     subplot(2,2,3)
     scatter([-10 -6:2:6 10],dCYddelta40)
-    yline(dcydd40)
+%     yline(dcydd40)
     xlabel('\beta')
     ylabel('dC_Y/d\delta_r')
     title('v=40, OEI')
     subplot(2,2,4)
     scatter([-10 -6:2:6 10],dCYddelta40b)
-    yline(dcydd40b)
+%     yline(dcydd40b)
      xlabel('\beta')
     ylabel('dC_Y/d\delta_r')
     title('v=40')
@@ -227,41 +226,48 @@ function [] = plotting(data)
     for iAOS = 1:length(AOS)
         
         % Put AoS values for different rudder deflection in same row
+        % dataset for V=20 OEI
         CMy020 = rud020(abs(AOS(iAOS)-rud020.AoS)<err, :);
         CMy520 = rud520(abs(AOS(iAOS)-rud520.AoS)<err, :);
         CMy1020 = rud1020(abs(AOS(iAOS)-rud1020.AoS)<err, :);
         CMyArr20(iAOS,:) = [CMy020.CMy CMy520.CMy CMy1020.CMy];
         
+        % code for both engine on dataset
         if AOS(iAOS)==-2
             CMy020b = rud020b(4, :);
             CMy520b = rud520b(abs(AOS(iAOS)-rud520b.AoS)<err, :);
             CMy1020b = rud1020b(abs(AOS(iAOS)-rud1020b.AoS)<err, :);
-            CMyArr20b(iAOS,:) = [CMy020b.CMy CMy520b.CMy CMy1020b.CMy];
+            temp = [AOS(iAOS) CMy020b.CMy CMy520b.CMy CMy1020b.CMy];
+            CMyArr20b = [CMyArr20b; temp];
             
         elseif AOS(iAOS)==0
-            CMyArr20b(iAOS,:) = [0 0 0];
+            % do nothing
         else
             CMy020b = rud020b(abs(AOS(iAOS)-rud020b.AoS)<err, :);
             CMy520b = rud520b(abs(AOS(iAOS)-rud520b.AoS)<err, :);
             CMy1020b = rud1020b(abs(AOS(iAOS)-rud1020b.AoS)<err, :);
-            CMyArr20b(iAOS,:) = [CMy020b.CMy CMy520b.CMy CMy1020b.CMy];
+            temp = [AOS(iAOS) CMy020b.CMy CMy520b.CMy CMy1020b.CMy];
+            CMyArr20b = [CMyArr20b; temp];
         end
         
+        % code for both V=40 dataset
         if AOS(iAOS)==-10
             CMy040 = rud040(1, :);
             CMy540 = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
             CMy1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
             CMyArr40(iAOS,:) = [CMy040.CMy CMy540.CMy CMy1040.CMy];
-        elseif AOS(iAOS)==-4
-            CMy040b = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
-            CMy540b = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
-            CMy1040b = rud1040(3, :);
-            CMyArr40b(iAOS,:) = [CMy040b.CMy CMy540b.CMy CMy1040b.CMy];
         else
             CMy040 = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
             CMy540 = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
             CMy1040 = rud1040(abs(AOS(iAOS)-rud1040.AoS)<err, :);
-            CMyArr40(iAOS,:) = [CMy040.CMy CMy540.CMy CMy1040.CMy];
+            CMyArr40(iAOS,:) = [CMy040.CMy CMy540.CMy mean(CMy1040.CMy)];
+        end
+        
+        if AOS(iAOS)==-4
+            CMy040b = rud040(abs(AOS(iAOS)-rud040.AoS)<err, :);
+            CMy540b = rud540(abs(AOS(iAOS)-rud540.AoS)<err, :);
+            CMy1040b = rud1040(3, :);
+            CMyArr40b(iAOS,:) = [CMy040b.CMy CMy540b.CMy CMy1040b.CMy];
         end
             CMy040b = rud040(abs(AOS(iAOS)-rud040b.AoS)<err, :);
             CMy540b = rud540(abs(AOS(iAOS)-rud540b.AoS)<err, :);
@@ -274,7 +280,6 @@ function [] = plotting(data)
     dCMyddelta20b   = [];
     dCMyddelta40    = [];
     dCMyddelta40b   = [];
-    
     CMy0d20b        = [];
     
 %% compute dCMy/d(delta_r)|beta
@@ -286,13 +291,9 @@ function [] = plotting(data)
         end
     end
     for idx=1:length(CMyArr20b)
-        if idx == 5
-            
-        else
-            fit=polyfit([0 5 10], CMyArr20b(idx,:),1);
-            dCMyddelta20b = [dCMyddelta20b fit(1)];
-            CMy0d20b = [CMy0d20b fit(2)];
-        end
+        fit=polyfit([0 5 10], CMyArr20b(idx,2:end),1);
+        dCMyddelta20b = [dCMyddelta20b fit(1)];
+        CMy0d20b = [CMy0d20b fit(2)];
     end    
     for idx=1:length(CMyArr40)
         if idx == 3
@@ -334,15 +335,16 @@ function [] = plotting(data)
     dCMydb1020b=polyfit(rud1020b.AoS,rud1020b.CMy,3);
     dCMydb1040=polyfit(rud1040.AoS,rud1040.CMy,3);
     dCMydb1040b=polyfit(rud1040b.AoS,rud1040b.CMy,3);
+    
     % average dCMydbeta for different delta_r
     dCMydb20    = mean([dCMydb020(3) dCMydb520(3) dCMydb1020(3)]);
-    dCMydb20b   = mean([dCMydb020b(3) dCMydb520b(3) dCMydb1020b(3)]);% too much noise
+    dCMydb20b   = mean([dCMydb020b(3) dCMydb520b(3) dCMydb1020b(3)]);
     dCMydb40    = mean([dCMydb040(3) dCMydb540(3) dCMydb1040(3)]);
     dCMydb40b   = mean([dCMydb040b(3) dCMydb540b(3) dCMydb1040b(3)]);
     
     % dCMydbeta|0 for different delta_r
     CMy0b20     = rud020(abs(rud020.AoS) < 0.2, end).CMy;%dCMydb020(4) + CMy0d20;
-    CMy0b20b    = rud020b(abs(rud020b.AoS) < 0.2, end).CMy;%dCMydb020b(4)+ CMy0d20b;
+    CMy0b20b    = (mean(rud020b.CMy(4:6))+rud020b.CMy(7))/2;%dCMydb020b(4)+ CMy0d20b;
     CMy0b40     = rud040(abs(rud040.AoS) < 0.2, end).CMy;%dCMydb040(4) + CMy0d40;
     CMy0b40b    = rud040b(abs(rud040b.AoS) < 0.2, end).CMy;%dCMydb040b(4)+ CMy0d40b;
     
@@ -354,17 +356,20 @@ function [] = plotting(data)
     % only compute OEI states, why do we even want to do it for both
     % engines on?
     aosspace = linspace(-5, 5, 11);
-    AoSTrim20 = findBeta4TrimAngle(CMy0b20, aosspace, dCMydd20, dCMydb20);
-    AoSTrim40 = findBeta4TrimAngle(CMy0b40, aosspace, dCMydd40, dCMydb40);
+    
+    AoSTrim20 = findTrimAngle(CMy0b20, aosspace, dCMydd20, dCMydb20);
+    AoSTrim40 = findTrimAngle(CMy0b40, aosspace, dCMydd40, dCMydb40);
     % if you actually insert the const. term, then both engines on require
     % more trimming then OEI. Noise?
-    AoSTrim40b = findBeta4TrimAngle(CMy0b40b, aosspace, dCMydd40b, dCMydb40b);
+    AoSTrim20b = findTrimAngle(CMy0b20b, aosspace, dCMydd20b, dCMydb20b); 
+    AoSTrim40b = findTrimAngle(CMy0b40b, aosspace, dCMydd40b, dCMydb40b);
     
     figure("defaultAxesFontSize", 14)
     hold on
     plot(aosspace, AoSTrim20, "DisplayName", "V20 - OEI")
     plot(aosspace, AoSTrim40, "DisplayName", "V40 - OEI")
     plot(aosspace, AoSTrim40b, "DisplayName", "V40")
+    plot(aosspace, AoSTrim20b, "DisplayName", "V20")
     xlabel("\beta")
     ylabel("\delta_{r,trim}")
     legend
@@ -406,22 +411,22 @@ function [] = plotting(data)
     ylabel('dC_Y/d\delta_r')
     title('v=20, OEI')
     hold on
-    yline(dcydd20)
+%     yline(dcydd20)
     subplot(2,2,2)
-    scatter([-10 -6:2:6 10],dCYddelta20b)
-    yline(dcydd20b)
+    scatter([-10 -6:2:-2 2:2:6 10],dCYddelta20b)
+%     yline(dcydd20b)
     xlabel('\beta')
     ylabel('dC_Y/d\delta_r')
     title('v=20')
     subplot(2,2,3)
     scatter([-10 -6:2:6 10],dCYddelta40)
-    yline(dcydd40)
+%     yline(dcydd40)
     xlabel('\beta')
     ylabel('dC_Y/d\delta_r')
     title('v=40, OEI')
     subplot(2,2,4)
     scatter([-10 -6:2:6 10],dCYddelta40b)
-    yline(dcydd40b)
+%     yline(dcydd40b)
      xlabel('\beta')
     ylabel('dC_Y/d\delta_r')
     title('v=40')
@@ -590,9 +595,9 @@ function [] = plotting(data)
     xlabel('\beta')
     ylabel('C_Y')
     
-    function beta = findBeta4TrimAngle(cstLst, betaLst, dyddrLst, ...
+    function delta_r = findTrimAngle(cstLst, betaLst, dyddrLst, ...
             dydbetaLst)
-       beta = (-dydbetaLst.*betaLst-cstLst)./(dyddrLst);
+       delta_r = (-dydbetaLst.*betaLst-cstLst)./(dyddrLst);
     end
     
 end

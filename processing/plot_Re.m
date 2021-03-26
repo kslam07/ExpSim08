@@ -219,8 +219,6 @@ function [] = plot_Re(data)
     plot(rud1040b.AoS, rud1040b.CMy,'b-x');
     legend('20m/s', '40m/s');
     xlabel('\beta [deg]');
-    ylabel('C_{My}');
-    
-    
+    ylabel('C_{My}');       
 end
 
