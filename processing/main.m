@@ -22,6 +22,8 @@ resThrust = 1;
 %% correct prop. off data using wall corrections
 data = corrPropoff(data);
 
+%% correct tail off data using wall corrections
+
 %% Correct model off data
 data.i0_org = data.i0;
 
@@ -109,14 +111,19 @@ for iName = 2:4
     blockageStruct.(nameMeas) = wallCorrStruct;
 end
 
-% TODO remove model off data from measurements
+%% TODO subtract tail-off data from measurements (to determine rudder eff.)
+data = subtractTailOff(data, "i0");
+%% TODO remove model off data from measurements
 data = removeModelOff(data, "i0");
 
+
 % Cn and Cy
+%% Plots to show wall correction effects
 % wallCorrPlots(data, blockageStruct, dalpha, dCmSC, dCdSC);
 % dCn/dbeta for all sideslip angles
 % dCn/ddelta_r for all sideslip angles
 
+%% some plots
 %OEI condition
 rud0_OEI(:,1) = data.i0.rud0.V(data.i1.rud0.iM2 == 0);
 rud0_OEI(:,2) = data.i0.rud0.AoS(data.i1.rud0.iM2 == 0);
