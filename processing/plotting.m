@@ -1,5 +1,5 @@
 function [] = plotting(data)
-    %% Get data indices
+    %% Get data indices to efficiently sort row
     idx020 = data.i2.rud0.V==20 & data.i0.rud0.iM2==0 & data.i0.rud0.J_M1>2;
     idx020b = data.i2.rud0.V==20 & data.i0.rud0.iM2~=0 & data.i0.rud0.J_M1>2;
     idx040 = data.i2.rud0.V==40 & data.i0.rud0.iM2==0 & data.i0.rud0.J_M1>2;
@@ -16,6 +16,7 @@ function [] = plotting(data)
     idx1040 = data.i2.rud10.V==40 & data.i0.rud10.iM2==0;
     idx1040b = data.i2.rud10.V==40 & data.i0.rud10.iM2~=0;
     
+    %% Sort rows based on indices
     jVar=sortrows(data.i0.rud0(idxJVar,:),'AoS');
     
     rud020=sortrows(data.i0.rud0(idx020,:),'AoS');
@@ -32,8 +33,7 @@ function [] = plotting(data)
     rud1020b=sortrows(data.i0.rud10(idx1020b,:),'AoS');
     rud1040=sortrows(data.i0.rud10(idx1040,:),'AoS');
     rud1040b=sortrows(data.i0.rud10(idx1040b,:),'AoS');
-    
-    %% loop
+
     err=0.05;
     CYArr20 = [];
     CYArr20b = [];
@@ -43,12 +43,14 @@ function [] = plotting(data)
     AOS = [-10 -6:2:6 10];
     for iAOS = 1:length(AOS)
         
-        % get the data
+        %% get the data
         CY020 = rud020(abs(AOS(iAOS)-rud020.AoS)<err, :);
         CY520 = rud520(abs(AOS(iAOS)-rud520.AoS)<err, :);
         CY1020 = rud1020(abs(AOS(iAOS)-rud1020.AoS)<err, :);
         CYArr20(iAOS,:) = [CY020.CY CY520.CY CY1020.CY];
         
+        %% screen data
+        % exceptions; multiple data points @ aos = -2
         if AOS(iAOS)==-2
             CY020b = rud020b(4, :);
             CY520b = rud520b(abs(AOS(iAOS)-rud520b.AoS)<err, :);
@@ -86,15 +88,18 @@ function [] = plotting(data)
             CYArr40b(iAOS,:) = [CY040b.CY CY540b.CY CY1040b.CY];
     end
     
-    dCYddelta20 = [];
-    dCYddelta20b = [];
-    dCYddelta40 = [];
-    dCYddelta40b = [];
+    %% compute the 1st order derivatives
+    dCYddelta20 = [];                       % dCY/d(delta_r) @ V=20 OEI
+    dCYddelta20b = [];                      % dCY/d(delta_r) @ V=20
+    dCYddelta40 = [];                       % dCY/d(delta_r) @ V=40 OEI
+    dCYddelta40b = [];                      % dCY/d(delta_r) @ V=40
     
+    % looping through sideslips
+    % for each sideslip, we compute dCy/d(delta_r)|beta
     for idx=1:length(CYArr20) % fit dCyddelta for different delta
         fit=polyfit([0 5 10], CYArr20(idx,:),1);
-        dCYddelta20(idx)=fit(1);
-        CY0d20(idx)=fit(2);
+        dCYddelta20(idx)=fit(1);                    % 1st derivative
+        CY0d20(idx)=fit(2);                         % cst. term
     end
     for idx=1:length(CYArr20b)
         fit=polyfit([0 5 10], CYArr20b(idx,:),1);
@@ -112,16 +117,20 @@ function [] = plotting(data)
         CY0d40b(idx)=fit(2);
     end
     
-    dcydd20=mean(dCYddelta20); % average value for different delta_r
+    % average value of dCy/d(delta_r) for varying sideslips
+    % assumption: dCy/d(delta_r) does not vary that much for -10<beta<10
+    dcydd20=mean(dCYddelta20);
     dcydd20b=mean(dCYddelta20b);
     dcydd40=mean(dCYddelta40);
     dcydd40b=mean(dCYddelta40b);
     
+    % take average of CY0 (cst. term) in TSE
     cy020=mean(CY0d20);
     cy020b=mean(CY0d20b);
     cy040=mean(CY0d40);
     cy040b=mean(CY0d40b);
     
+% ====================== COMPUTE dCy/d(beta) ==============================
     dcydb020=polyfit(rud020.AoS,rud020.CY,3); % polyfit for CY
     dcydb020b=polyfit(rud020b.AoS,rud020b.CY,3);
     dcydb040=polyfit(rud040.AoS,rud040.CY,3);
@@ -137,18 +146,17 @@ function [] = plotting(data)
     dcydb1040=polyfit(rud1040.AoS,rud1040.CY,3);
     dcydb1040b=polyfit(rud1040b.AoS,rud1040b.CY,3);
     
-    dcydb20=mean([dcydb020(3) dcydb520(3) dcydb1020(3)]); % average dCYdbeta for different delta_r
+    % average dCydbeta for varying rudder angles
+    dcydb20=mean([dcydb020(3) dcydb520(3) dcydb1020(3)]);
     dcydb20b=mean([dcydb020b(3) dcydb520b(3) dcydb1020b(3)]);
     dcydb40=mean([dcydb040(3) dcydb540(3) dcydb1040(3)]);
     dcydb40b=mean([dcydb040b(3) dcydb540b(3) dcydb1040b(3)]);
     
-    CY0b20=mean([dcydb020(4) dcydb520(4) dcydb1020(4)]); % average dCYdbeta for different delta_r
+    % average dCydbeta for varying rudder angles
+    CY0b20=mean([dcydb020(4) dcydb520(4) dcydb1020(4)]);
     CY0b20b=mean([dcydb020b(4) dcydb520b(4) dcydb1020b(4)]);
     CY0b40=mean([dcydb040(4) dcydb540(4) dcydb1040(4)]);
     CY0b40b=mean([dcydb040b(4) dcydb540b(4) dcydb1040b(4)]);
-    
-    rudder40=(-(CY0b40+CY0d40)-dcydb40.*AOS)/dcydd40
-    rudder40b=(-(CY0b40b+CY0d40b)-dcydb40b.*AOS)/dcydd40b
     
 %     plot(AOS,dcydb40.*AOS+dCYddelta40*10)
     
@@ -178,7 +186,6 @@ function [] = plotting(data)
 %     ylabel('dC_Y/d\beta')
 %     title('v=40')
 %     sgtitle('dC_Y/d\beta')
-
     
     subplot(2,2,1)
     scatter([-10 -6:2:6 10],dCYddelta20)
@@ -208,14 +215,14 @@ function [] = plotting(data)
     sgtitle('dC_Y/d\delta_r')
     
 
-    %%
-        %% loop
+%% Start block computation Cmr derivatives and trim angle
     err=0.05;
     CMyArr20 = [];  % setup arrays for CMy for each engine and velocity setting
     CMyArr20b = [];
     CMyArr40 = [];
     CMyArr40b = [];
-    
+
+%% Sort and order the CMy values of each configuration
     AOS = [-10 -6:2:6 10];
     for iAOS = 1:length(AOS)
         
@@ -263,43 +270,56 @@ function [] = plotting(data)
         
     end
     
-    dCMyddelta20 = [];  % empty array for dCMyddelta
-    dCMyddelta20b = [];
-    dCMyddelta40 = [];
-    dCMyddelta40b = [];
+    dCMyddelta20    = [];  % empty array for dCMyddelta
+    dCMyddelta20b   = [];
+    dCMyddelta40    = [];
+    dCMyddelta40b   = [];
     
-
+    CMy0d20b        = [];
+    
+%% compute dCMy/d(delta_r)|beta
     for idx=1:length(CMyArr20) % fit dCMyddelta for different delta
         fit=polyfit([0 5 10], CMyArr20(idx,:),1);
-        dCMyddelta20(idx)=fit(1);   % value for dCMyddelta
-        CMy0d20(idx)=fit(2);    % value for CMy0
+        dCMyddelta20 = [dCMyddelta20 fit(1)];      % value for dCMy/d(delta_r)
+        if idx == 5
+            CMy0d20 = fit(2);                % value for CMyo
+        end
     end
     for idx=1:length(CMyArr20b)
-        fit=polyfit([0 5 10], CMyArr20b(idx,:),1);
-        dCMyddelta20b(idx)=fit(1);
-        CMy0d20(idx)=fit(2);
+        if idx == 5
+            
+        else
+            fit=polyfit([0 5 10], CMyArr20b(idx,:),1);
+            dCMyddelta20b = [dCMyddelta20b fit(1)];
+            CMy0d20b = [CMy0d20b fit(2)];
+        end
     end    
     for idx=1:length(CMyArr40)
-        fit=polyfit([0 5 10], CMyArr40(idx,:),1);
-        dCMyddelta40(idx)=fit(1);
-        CMy0d4(idx)=fit(2);
+        if idx == 3
+            1;
+        elseif idx == 5
+            fit=polyfit([0 5 10], CMyArr40(idx,:),1);
+            CMy0d40 = fit(2);
+        else
+            fit=polyfit([0 5 10], CMyArr40(idx,:),1);
+            dCMyddelta40 = [dCMyddelta40 fit(1)];
+        end
     end
     for idx=1:length(CMyArr40b)
         fit=polyfit([0 5 10], CMyArr40b(idx,:),1);
-        dCMyddelta40b(idx)=fit(1);
-        CMy0d40b(idx)=fit(2);
+        dCMyddelta40b = [dCMyddelta40b fit(1)];
+        if idx == 5
+            CMy0d40b = fit(2);
+        end
     end
     
+    % take the average of dCMy/d(delta_r) for varying sideslip angles
     dCMydd20=mean(dCMyddelta20); % average value for different delta_r
     dCMydd20b=mean(dCMyddelta20b);
     dCMydd40=mean(dCMyddelta40);
     dCMydd40b=mean(dCMyddelta40b);
     
-    cmy0d20=mean(CY0d20);    % average value for Cmy0
-    cmy0d20b=mean(CY0d20b);
-    cmy0d40=mean(CY0d40);
-    cmy0d40b=mean(CY0d40b);
-    
+    %% compute dCMy/d(beta)
     dCMydb020=polyfit(rud020.AoS,rud020.CMy,3); % polyfit for CMy
     dCMydb020b=polyfit(rud020b.AoS,rud020b.CMy,3);
     dCMydb040=polyfit(rud040.AoS,rud040.CMy,3);
@@ -314,19 +334,41 @@ function [] = plotting(data)
     dCMydb1020b=polyfit(rud1020b.AoS,rud1020b.CMy,3);
     dCMydb1040=polyfit(rud1040.AoS,rud1040.CMy,3);
     dCMydb1040b=polyfit(rud1040b.AoS,rud1040b.CMy,3);
+    % average dCMydbeta for different delta_r
+    dCMydb20    = mean([dCMydb020(3) dCMydb520(3) dCMydb1020(3)]);
+    dCMydb20b   = mean([dCMydb020b(3) dCMydb520b(3) dCMydb1020b(3)]);% too much noise
+    dCMydb40    = mean([dCMydb040(3) dCMydb540(3) dCMydb1040(3)]);
+    dCMydb40b   = mean([dCMydb040b(3) dCMydb540b(3) dCMydb1040b(3)]);
     
-    dCMydb20=mean([dCMydb020(3) dCMydb520(3) dCMydb1020(3)]); % average dCMydbeta for different delta_r
-    dCMydb20b=mean([dCMydb020b(3) dCMydb520b(3) dCMydb1020b(3)]);
-    dCMydb40=mean([dCMydb040(3) dCMydb540(3) dCMydb1040(3)]);
-    dCMydb40b=mean([dCMydb040b(3) dCMydb540b(3) dCMydb1040b(3)]);
+    % dCMydbeta|0 for different delta_r
+    CMy0b20     = dCMydb020(4) + CMy0d20;
+    CMy0b20b    = dCMydb020b(4)+ CMy0d20b;
+    CMy0b40     = dCMydb040(4) + CMy0d40;
+    CMy0b40b    = dCMydb040b(4)+ CMy0d40b;
     
-    CMy0b20=mean([dCMydb020(4) dCMydb520(4) dCMydb1020(4)]); % average dCMydbeta for different delta_r
-    CMy0b20b=mean([dCMydb020b(4) dCMydb520b(4) dCMydb1020b(4)]);
-    CMy0b40=mean([dCMydb040(4) dCMydb540(4) dCMydb1040(4)]);
-    CMy0b40b=mean([dCMydb040b(4) dCMydb540b(4) dCMydb1040b(4)]);
+    % compute the corresponding sideslip for the given rudder angle and
+    % configuration. You want to find the trim based on the steady-state
+    % condition which we define to be delta_r=0 and beta=0. Then, the
+    % CMy0 should be obtained from CMy0|beta=0 and CMy0|delta_r=0
     
-    rudder40=(-(CMy0b40+cmy0d40)-dCMydb40.*AOS)/dCMydd40;
-    rudder40b=(-(CMy0b40b+cmy0d40b)-dCMydb40b.*AOS)/dCMydd40b;
+    % only compute OEI states, why do we even want to do it for both
+    % engines on?
+    aosspace = linspace(-5, 5, 11);
+    AoSTrim20 = findBeta4TrimAngle(CMy0b20, aosspace, dCMydd20, dCMydb20);
+    AoSTrim40 = findBeta4TrimAngle(CMy0b40, aosspace, dCMydd40, dCMydb40);
+    % if you actually insert the const. term, then both engines on require
+    % more trimming then OEI. Noise?
+    AoSTrim40b = findBeta4TrimAngle(0, aosspace, dCMydd40b, dCMydb40b);
+    
+    figure("defaultAxesFontSize", 14)
+    hold on
+    plot(aosspace, AoSTrim20, "DisplayName", "V20 - OEI")
+    plot(aosspace, AoSTrim40, "DisplayName", "V40 - OEI")
+    plot(aosspace, AoSTrim40b, "DisplayName", "V40")
+    xlabel("\beta")
+    ylabel("\delta_{r,trim}")
+    legend
+    grid
     
 %     plot(AOS,dcydb40.*AOS+dCYddelta40*10)
     
@@ -537,4 +579,10 @@ function [] = plotting(data)
     xlim([-10,10])
     xlabel('\beta')
     ylabel('C_Y')
+    
+    function beta = findBeta4TrimAngle(cstLst, betaLst, dyddrLst, ...
+            dydbetaLst)
+       beta = (-dydbetaLst.*betaLst-cstLst)./(dyddrLst);
+    end
+    
 end
