@@ -23,7 +23,7 @@ resThrust = 1;
 data = corrPropoff(data);
 
 %% Correct model off data
-i0_org = data.i0;
+data.i0_org = data.i0;
 
 %% Run corrections
 % i0: starting and final test matrix
@@ -61,56 +61,61 @@ epsWB = corrWakeblockage(data, "i2");
 % slipstream; can take i1 since it doesn't matter
 epsSS = corrSlipstream(data, "i1");
 
+blockageStruct = struct();
 % APPLY CORRECTIONS
 for iName = 2:4
     nameMeas = cell2mat(fieldNames(iName));
     % sum all blockage + slipstream eps
     epsToti = epsSS.(nameMeas) + data.epsSB + epsWB.(nameMeas);
     velCorr = (1+epsToti).*data.i2.(nameMeas).V;
-    dV      = epsToti .* data.i2.(nameMeas).V;
+    
+    velCorrSS = (1+epsSS.(nameMeas)) .* data.i2.(nameMeas).V;
+    dVuc_VcSS = (data.i2.(nameMeas).V.^2 ./ velCorrSS.^2 - 1);
 
     % update coefficients coefficients in aero reference frame
     dVuc_Vc = (data.i2.(nameMeas).V.^2 ./ velCorr.^2 - 1);
     dCL     = data.i2.(nameMeas).CL .* dVuc_Vc;
     dCD     = data.i2.(nameMeas).CD .* dVuc_Vc;
     dCYaw   = data.i2.(nameMeas).CYaw .* dVuc_Vc;
-    dCY     = data.i2.(nameMeas).CY .* dVuc_Vc;
     dCMr    = data.i2.(nameMeas).CMr .* dVuc_Vc;
     dCMp    = data.i2.(nameMeas).CMp .* dVuc_Vc;
     dCMp25c = data.i2.(nameMeas).CMp25c .* dVuc_Vc;
     dCMy    = data.i2.(nameMeas).CMy .* dVuc_Vc;
     dCT     = data.i2.(nameMeas).CT .* dVuc_Vc;
-    ddPb    = data.i2.(nameMeas).dPb .* dVuc_Vc;
+    ddPb    = data.i2.(nameMeas).dPb .* dVuc_VcSS;
 
     % correct coefficients due to lift interference
     % correct drag coefficient
-    dCD = dCD + dCdSC.(nameMeas);
+    dCDtot = dCD + dCdSC.(nameMeas);
     % correct pitching moment coefficient
     dCMp25c = dCMp25c + dCmSC.(nameMeas);
 
     % Rewrite values in "i0" matrix; repeat
     data.i0.(nameMeas).CL       = data.i0.(nameMeas).CL + dCL;
-    data.i0.(nameMeas).CD       = data.i0.(nameMeas).CD + dCD;
+    data.i0.(nameMeas).CD       = data.i0.(nameMeas).CD + dCDtot;
     data.i0.(nameMeas).CYaw     = data.i0.(nameMeas).CYaw + dCYaw;
-    data.i0.(nameMeas).CY       = data.i0.(nameMeas).CY + dCY;
     data.i0.(nameMeas).CMr      = data.i0.(nameMeas).CMr + dCMr;
     data.i0.(nameMeas).CMp      = data.i0.(nameMeas).CMp + dCMp;
     data.i0.(nameMeas).CMp25c   = data.i0.(nameMeas).CMp25c + dCMp25c;
     data.i0.(nameMeas).CMy      = data.i0.(nameMeas).CMy + dCMy;
-    data.i0.(nameMeas).CT       = data.i0.(nameMeas).CT + dCT;
     data.i0.(nameMeas).V        = velCorr;
     data.i0.(nameMeas).AoA      = data.i0.(nameMeas).AoA + dalpha.(nameMeas);
     data.i0.(nameMeas).dPb      = data.i1.(nameMeas).dPb + ddPb; % THRUST!
+    
+    % Add the corrections in a new structure
+    wallCorrStruct = struct("dVuC_Vc", dVuc_Vc, "dCL", dCL, "dCD", dCD, ...
+        "dCYaw", dCYaw, "dCMr", dCMr, "dCMp", dCMp, "dCMp25c", ...
+        dCMp25c, "dCMy", dCMy, "ddPb", ddPb, "velCorr", velCorr);
+    blockageStruct.(nameMeas) = wallCorrStruct;
 end
 
 % TODO remove model off data from measurements
 data = removeModelOff(data, "i0");
 
 % Cn and Cy
-
+% wallCorrPlots(data, blockageStruct, dalpha, dCmSC, dCdSC);
 % dCn/dbeta for all sideslip angles
 % dCn/ddelta_r for all sideslip angles
-
 
 %OEI condition
 rud0_OEI(:,1) = data.i0.rud0.V(data.i1.rud0.iM2 == 0);
