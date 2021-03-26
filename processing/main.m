@@ -23,7 +23,7 @@ resThrust = 1;
 data = corrPropoff(data);
 
 %% correct tail off data using wall corrections
-
+% data = corrPropoff(data);
 %% Correct model off data
 data.i0_org = data.i0;
 
@@ -125,50 +125,50 @@ data = removeModelOff(data, "i0");
 
 %% some plots
 %OEI condition
-rud0_OEI(:,1) = data.i0.rud0.V(data.i1.rud0.iM2 == 0);
-rud0_OEI(:,2) = data.i0.rud0.AoS(data.i1.rud0.iM2 == 0);
-rud0_OEI(:,3) = data.i0.rud0.CN(data.i1.rud0.iM2 == 0);
-rud0_OEI(:,4) = data.i0.rud0.CY(data.i1.rud0.iM2 == 0);
-rud0_OEI_V40 = rud0_OEI(rud0_OEI(:,1) == 40,:);
-rud0_OEI_V20 = rud0_OEI(rud0_OEI(:,1) == 20,:);
-
-rud5_OEI(:,1) = data.i0.rud5.V(data.i1.rud5.iM2 == 0);
-rud5_OEI(:,2) = data.i0.rud5.AoS(data.i1.rud5.iM2 == 0);
-rud5_OEI(:,3) = data.i0.rud5.CN(data.i1.rud5.iM2 == 0);
-rud5_OEI(:,4) = data.i0.rud5.CY(data.i1.rud5.iM2 == 0);
-rud5_OEI_V40 = rud5_OEI(rud5_OEI(:,1) == 40,:);
-rud5_OEI_V20 = rud5_OEI(rud5_OEI(:,1) == 20,:);
-
-rud10_OEI(:,1) = data.i0.rud10.V(data.i1.rud10.iM2 == 0);
-rud10_OEI(:,2) = data.i0.rud10.AoS(data.i1.rud10.iM2 == 0);
-rud10_OEI(:,3) = data.i0.rud10.CN(data.i1.rud10.iM2 == 0);
-rud10_OEI(:,4) = data.i0.rud10.CY(data.i1.rud10.iM2 == 0);
-rud10_OEI_V40 = rud10_OEI(rud10_OEI(:,1) == 40,:);
-rud10_OEI_V20 = rud10_OEI(rud10_OEI(:,1) == 20,:);
-
-figure;
-plot(rud0_OEI_V40(:,2), rud0_OEI_V40(:,3),'o');
-hold on
-plot(rud0_OEI_V20(:,2), rud0_OEI_V20(:,3),'x');
-legend('40m/s', '20m/s');
-xlabel('\beta');
-ylabel('C_{N}');
-title('\delta_{r} = 0');
-
-figure;
-plot(rud5_OEI_V40(:,2), rud5_OEI_V40(:,3),'o');
-hold on
-plot(rud5_OEI_V20(:,2), rud5_OEI_V20(:,3),'x');
-legend('40m/s', '20m/s');
-xlabel('\beta');
-ylabel('C_{N}');
-title('\delta_{r} = 5');
-
-figure;
-plot(rud10_OEI_V40(:,2), rud10_OEI_V40(:,3),'o');
-hold on
-plot(rud10_OEI_V20(:,2), rud10_OEI_V20(:,3),'x');
-legend('40m/s', '20m/s');
-xlabel('\beta');
-ylabel('C_{N}');
-title('\delta_{r} = 10');
+% rud0_OEI(:,1) = data.i0.rud0.V(data.i1.rud0.iM2 == 0);
+% rud0_OEI(:,2) = data.i0.rud0.AoS(data.i1.rud0.iM2 == 0);
+% rud0_OEI(:,3) = data.i0.rud0.CN(data.i1.rud0.iM2 == 0);
+% rud0_OEI(:,4) = data.i0.rud0.CY(data.i1.rud0.iM2 == 0);
+% rud0_OEI_V40 = rud0_OEI(rud0_OEI(:,1) == 40,:);
+% rud0_OEI_V20 = rud0_OEI(rud0_OEI(:,1) == 20,:);
+% 
+% rud5_OEI(:,1) = data.i0.rud5.V(data.i1.rud5.iM2 == 0);
+% rud5_OEI(:,2) = data.i0.rud5.AoS(data.i1.rud5.iM2 == 0);
+% rud5_OEI(:,3) = data.i0.rud5.CN(data.i1.rud5.iM2 == 0);
+% rud5_OEI(:,4) = data.i0.rud5.CY(data.i1.rud5.iM2 == 0);
+% rud5_OEI_V40 = rud5_OEI(rud5_OEI(:,1) == 40,:);
+% rud5_OEI_V20 = rud5_OEI(rud5_OEI(:,1) == 20,:);
+% 
+% rud10_OEI(:,1) = data.i0.rud10.V(data.i1.rud10.iM2 == 0);
+% rud10_OEI(:,2) = data.i0.rud10.AoS(data.i1.rud10.iM2 == 0);
+% rud10_OEI(:,3) = data.i0.rud10.CN(data.i1.rud10.iM2 == 0);
+% rud10_OEI(:,4) = data.i0.rud10.CY(data.i1.rud10.iM2 == 0);
+% rud10_OEI_V40 = rud10_OEI(rud10_OEI(:,1) == 40,:);
+% rud10_OEI_V20 = rud10_OEI(rud10_OEI(:,1) == 20,:);
+% 
+% figure;
+% plot(rud0_OEI_V40(:,2), rud0_OEI_V40(:,3),'o');
+% hold on
+% plot(rud0_OEI_V20(:,2), rud0_OEI_V20(:,3),'x');
+% legend('40m/s', '20m/s');
+% xlabel('\beta');
+% ylabel('C_{N}');
+% title('\delta_{r} = 0');
+% 
+% figure;
+% plot(rud5_OEI_V40(:,2), rud5_OEI_V40(:,3),'o');
+% hold on
+% plot(rud5_OEI_V20(:,2), rud5_OEI_V20(:,3),'x');
+% legend('40m/s', '20m/s');
+% xlabel('\beta');
+% ylabel('C_{N}');
+% title('\delta_{r} = 5');
+% 
+% figure;
+% plot(rud10_OEI_V40(:,2), rud10_OEI_V40(:,3),'o');
+% hold on
+% plot(rud10_OEI_V20(:,2), rud10_OEI_V20(:,3),'x');
+% legend('40m/s', '20m/s');
+% xlabel('\beta');
+% ylabel('C_{N}');
+% title('\delta_{r} = 10');
