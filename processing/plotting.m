@@ -610,7 +610,7 @@ figure(4) % figure for thrust coefficient
 %     hold on
 %     plot([2.1 1.8 1.6], [0.115 0.235 0.3073])
     
-    function beta = findBeta4TrimAngle(cstLst, betaLst, dyddrLst, ...
+    function delta_r = findTrimAngle(cstLst, betaLst, dyddrLst, ...
             dydbetaLst)
        delta_r = (-dydbetaLst.*betaLst-cstLst)./(dyddrLst);
     end
