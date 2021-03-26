@@ -116,7 +116,6 @@ data = subtractTailOff(data, "i0");
 %% TODO remove model off data from measurements
 data = removeModelOff(data, "i0");
 
-
 % Cn and Cy
 %% Plots to show wall correction effects
 % wallCorrPlots(data, blockageStruct, dalpha, dCmSC, dCdSC);
