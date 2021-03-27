@@ -15,14 +15,15 @@ measPath = "OUTPUT.xls";
 tailOffPath = "./DATA/TailOffData.xlsx";
 data = load2Struct(measPath, tailOffPath);
 
+%% Correct model off data
+data.i0_org = data.i0;
 %% correct prop. off data using wall corrections
 data = corrPropoff(data);
 
 %% correct tail off data using wall corrections
 data = corrTailoff(data);
 data = removeModelOff(data, "tailoffAoS");
-%% Correct model off data
-data.i0_org = data.i0;
+
 
 %% Run corrections
 % i0: starting and final test matrix
