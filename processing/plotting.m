@@ -3,7 +3,7 @@ function plotting(dataStruct, nameMeas)
     dataOrig = dataStruct.i0_org;
     % tail or measurements
     dataMeas = dataStruct.(nameMeas);
-
+    
     %% Get data indices to efficiently sort row
     idx020 = dataOrig.rud0.V==20 & dataStruct.i0.rud0.iM2==0 & dataOrig.rud0.J_M1>2;
     idx020b = dataOrig.rud0.V==20 & dataOrig.rud0.iM2~=0 & dataOrig.rud0.J_M1>2;
@@ -362,17 +362,17 @@ function plotting(dataStruct, nameMeas)
     AoSTrim20b = findTrimAngle(CMy0b20b, aosspace, dCMydd20b, dCMydb20b); 
     AoSTrim40b = findTrimAngle(CMy0b40b, aosspace, dCMydd40b, dCMydb40b);
     
-%     figure(10)
-%     figure("defaultAxesFontSize", 14)
-%     hold on
-%     plot(aosspace, AoSTrim20, "DisplayName", "V20 - OEI")
-%     plot(aosspace, AoSTrim40, "DisplayName", "V40 - OEI")
-%     plot(aosspace, AoSTrim40b, "DisplayName", "V40")
-%     plot(aosspace, AoSTrim20b, "DisplayName", "V20")
-%     xlabel("\beta")
-%     ylabel("\delta_{r,trim}")
-%     legend
-%     grid
+    figure(10)
+    figure("defaultAxesFontSize", 14)
+    hold on
+    plot(aosspace, AoSTrim20, "DisplayName", "V20 - OEI")
+    plot(aosspace, AoSTrim40, "DisplayName", "V40 - OEI")
+    plot(aosspace, AoSTrim40b, "DisplayName", "V40")
+    plot(aosspace, AoSTrim20b, "DisplayName", "V20")
+    xlabel("\beta")
+    ylabel("\delta_{r,trim}")
+    legend
+    grid
     
     %% plots for trimming
 
