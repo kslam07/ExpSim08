@@ -3,6 +3,10 @@ function plotting(dataStruct, nameMeas)
     dataOrig = dataStruct.i0_org;
     % tail or measurements
     dataMeas = dataStruct.(nameMeas);
+
+    if nameMeas == "tailStruct"
+        dataStruct = translateMoments(dataStruct, [0.48 0 0], "tailStruct");
+    end
     
     %% Get data indices to efficiently sort row
     idx020 = dataOrig.rud0.V==20 & dataStruct.i0.rud0.iM2==0 & dataOrig.rud0.J_M1>2;
@@ -97,6 +101,10 @@ function plotting(dataStruct, nameMeas)
         end
     end
     
+    CT=rud040b.dPb.*rud040b.J_M1.^2*pi/8;
+    CP=CT.*rud040b.V./rud040b.rpsM1/0.2032;
+    e=CT./CP.*rud040b.J_M1;
+    
     %% compute the 1st order derivatives
     dCYddelta20 = [];                       % dCY/d(delta_r) @ V=20 OEI
     dCYddelta20b = [];                      % dCY/d(delta_r) @ V=20
@@ -189,39 +197,41 @@ function plotting(dataStruct, nameMeas)
     figure("defaultAxesFontSize", 16)
     subplot(2,2,1)
     lim=11;
-    scatter([-10 -6:2:6 10],dCYddelta20,'LineWidth',2)
+    plot([-10 -6:2:6 10],dCYddelta20,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
     xlabel('\beta [\circ]')
     ylabel('dC_Y/d\delta_r [-]')
     title('U_{\infty} = 20, OEI')
     xlim([-lim lim])
-    ylim([min(dCYddelta20)*1.01 max(dCYddelta20)*1.01])
+    ylim([min(dCYddelta20)*0.95 max(dCYddelta20)*1.05])
     grid on
     hold on
 %     yline(dcydd20)
     subplot(2,2,2)
-    scatter([-10 -6:2:-2 2:2:6 10],dCYddelta20b,'LineWidth',2)
+    plot(unique(rud020b.AoS),dCYddelta20b,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
 %     yline(dcydd20b)
     xlabel('\beta [\circ]')
     ylabel('dC_Y/d\delta_r [-]')
     title('U_{\infty} = 20')
     xlim([-lim lim])
+    ylim([min(dCYddelta20b)*1.15 max(dCYddelta20b)*1.2])
     grid on
     subplot(2,2,3)
-    scatter([-10 -6:2:6 10],dCYddelta40,'LineWidth',2)
+    plot(unique(rud040.AoS),dCYddelta40,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
 %     yline(dcydd40)
     xlabel('\beta [\circ]')
     ylabel('dC_Y/d\delta_r [-]')
     title('U_{\infty} = 40, OEI')
     xlim([-lim lim])
+    ylim([min(dCYddelta40)*0.95 max(dCYddelta40)*1.05])
     grid on
     subplot(2,2,4)
-    scatter([-10 -6:2:6 10],dCYddelta40b,'LineWidth',2)
+    plot(unique(rud040b.AoS),dCYddelta40b,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
 %     yline(dcydd40b)
      xlabel('\beta [\circ]')
     ylabel('dC_Y/d\delta_r [-]')
     title('U_{\infty} = 40')
     xlim([-lim lim])
-    ylim([min(dCYddelta40b)*0.1 max(dCYddelta40b)*1.05])
+    ylim([min(dCYddelta40b)*0.75 max(dCYddelta40b)*1.05])
     grid on
     set(gcf,'color','w')
 
@@ -362,6 +372,7 @@ function plotting(dataStruct, nameMeas)
     AoSTrim20b = findTrimAngle(CMy0b20b, aosspace, dCMydd20b, dCMydb20b); 
     AoSTrim40b = findTrimAngle(CMy0b40b, aosspace, dCMydd40b, dCMydb40b);
     
+<<<<<<< HEAD
     figure(10)
     figure("defaultAxesFontSize", 14)
     hold on
@@ -371,6 +382,16 @@ function plotting(dataStruct, nameMeas)
     plot(aosspace, AoSTrim20b, "DisplayName", "V20")
     xlabel("\beta")
     ylabel("\delta_{r,trim}")
+=======
+    figure("defaultAxesFontSize", 14)
+    hold on
+    plot(aosspace, AoSTrim20, "DisplayName", "V20 - OEI",'LineStyle','--','Color',[0, 0.4470, 0.7410])
+    plot(aosspace, AoSTrim40, "DisplayName", "V40 - OEI",'LineStyle','--','Color',[0.8500, 0.3250, 0.0980])
+    plot(aosspace, AoSTrim40b, "DisplayName", "V40",'Color',[0.8500, 0.3250, 0.0980])
+    plot(aosspace, AoSTrim20b, "DisplayName", "V20",'Color',[0, 0.4470, 0.7410])
+    xlabel("\beta [-]")
+    ylabel("\delta_{r,trim} [\circ]")
+>>>>>>> a12dc87d4188690148eee22f867b8a05df3730d2
     legend
     grid
     
@@ -405,10 +426,10 @@ function plotting(dataStruct, nameMeas)
 %     ylabel('dC_Y/d\beta')
 %     title('v=40')
 %     sgtitle('dC_Y/d\beta')
-    
+
     figure("defaultAxesFontSize", 16)
     subplot(2,2,1)
-    scatter([-10 -6:2:6 10],dCMyddelta20,'LineWidth',2)
+    plot([-10 -6:2:6 10],dCMyddelta20,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
     xlabel('\beta [\circ]')
     ylabel('dC_N/d\delta_r [-]')
     title('U_{\infty} = 20, OEI')
@@ -418,16 +439,16 @@ function plotting(dataStruct, nameMeas)
     hold on
 %     yline(dcydd20)
     subplot(2,2,2)
-    scatter(unique(rud020b.AoS),dCMyddelta20b,'LineWidth',2)
+    plot(unique(rud020b.AoS),dCMyddelta20b,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
 %     yline(dcydd20b)
     xlabel('\beta [\circ]')
     ylabel('dC_N/d\delta_r [-]')
     title('U_{\infty} = 20')
     grid on
     xlim([-lim lim])
-    ylim([min(dCMyddelta20)*1.05 max(dCMyddelta20)*0.95])
+    ylim([min(dCMyddelta20b)*1.15 max(dCMyddelta20b)*1.15])
     subplot(2,2,3)
-    scatter(unique(rud040.AoS),dCMyddelta40,'LineWidth',2)
+    plot(unique(rud040.AoS),dCMyddelta40,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
 %     yline(dcydd40)
     xlabel('\beta [\circ]')
     ylabel('dC_N/d\delta_r [-]')
@@ -436,13 +457,13 @@ function plotting(dataStruct, nameMeas)
     xlim([-lim lim])
     ylim([min(dCMyddelta40)*1.05 max(dCMyddelta40)*0.95])
     subplot(2,2,4)
-    scatter([-10 -6:2:6 10],dCMyddelta40b,'LineWidth',2)
+     plot([-10 -6:2:6 10],dCMyddelta40b,'LineStyle','--','Marker','o','MarkerSize',10,'Color','black')
 %     yline(dcydd40b)
      xlabel('\beta [\circ]')
     ylabel('dC_N/d\delta_r [-]')
     title('U_{\infty} = 40')
     xlim([-lim lim])
-    ylim([min(dCMyddelta40b)*1.05 max(dCMyddelta40b)*0.95])
+    ylim([min(dCMyddelta40b)*1.05 max(dCMyddelta40b)*0.85])
     grid on
     set(gcf,'color','w')
     
@@ -479,50 +500,50 @@ function plotting(dataStruct, nameMeas)
     figure(1)
     t = tiledlayout(2,3,'TileSpacing','Compact','Padding','Compact');
     nexttile
-    plot(rud040b.AoS,rud040b.CD,'o','MarkerSize',8,'LineStyle','--')
+    plot(rud040b.AoS,rud040b.CD,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
-    plot(rud020b.AoS([1:4, 7:10]),rud020b.CD([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--')
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CD([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     xlim([-10,10])
     xlabel('\beta [\circ]')
     ylabel('C_D [-]')
     grid on
     legend('U_{\infty} = 40','U_{\infty} = 20')
     nexttile
-    plot(rud040b.AoS,rud040b.CY,'o','MarkerSize',8,'LineStyle','--')
+    plot(rud040b.AoS,rud040b.CY,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
-    plot(rud020b.AoS([1:4, 7:10]),rud020b.CY([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--')
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CY([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     xlim([-10,10])
     xlabel('\beta [\circ]')
     ylabel('C_Y [-]')
     grid on
     nexttile
-    plot(rud040b.AoS,rud040b.CL,'o','MarkerSize',8,'LineStyle','--')
+    plot(rud040b.AoS,rud040b.CL,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
-    plot(rud020b.AoS([1:4, 7:10]),rud020b.CL([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--')
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CL([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     xlim([-10,10])
     xlabel('\beta [\circ]')
     ylabel('C_L [-]')
     grid on
     nexttile
-    plot(rud040b.AoS,rud040b.CMr,'o','MarkerSize',8,'LineStyle','--')
+    plot(rud040b.AoS,rud040b.CMr,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
-    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMr([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--')
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMr([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     xlim([-10,10])   
     xlabel('\beta [\circ]')
     ylabel('C_{Mr} [-]')
     grid on
     nexttile
-    plot(rud040b.AoS,rud040b.CMp25c,'o','MarkerSize',8,'LineStyle','--')
+    plot(rud040b.AoS,rud040b.CMp25c,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
-    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMp25c([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--')
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMp25c([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     xlim([-10,10])
     xlabel('\beta [\circ]')
     ylabel('C_{Mp25c} [-]')
     grid on
     nexttile
-    plot(rud040b.AoS,rud040b.CMy,'o','MarkerSize',8,'LineStyle','--')
+    plot(rud040b.AoS,rud040b.CMy,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
-    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--')
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     xlim([-10,10])   
     xlabel('\beta [\circ]')
     ylabel('C_{My} [-]')
@@ -530,165 +551,276 @@ function plotting(dataStruct, nameMeas)
 
     
 
-    figure(2)
-    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-    nexttile
-    plot(rud040.AoS,rud040.CY,'x')
-    hold on
-    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CY,3),rud040.AoS))
-    plot(rud040b.AoS,rud040b.CY,'o')
-    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CY,3),rud040b.AoS))
-    xlim([-10,10])
-    xlabel('\beta')
-    ylabel('C_Y')
-    grid on
-    nexttile
-    plot(rud040.AoS,rud040.CD,'x')
-    hold on
-    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CD,3),rud040.AoS))
-    plot(rud040b.AoS,rud040b.CD,'o')
-    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CD,3),rud040b.AoS))
-    xlim([-10,10])
-    xlabel('\beta')
-    ylabel('C_D')
-    grid on
-    nexttile
-    plot(rud040.AoS,rud040.CMr,'x')
-    hold on
-    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMr,3),rud040.AoS))
-    plot(rud040b.AoS,rud040b.CMr,'o')
-    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMr,3),rud040b.AoS))
-    xlim([-10,10])
-    xlabel('\beta')
-    ylabel('C_{Mr}')
-    grid on
-    nexttile
-    plot(rud040.AoS,rud040.CMp,'x')
-    hold on
-    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMp,3),rud040.AoS))
-    plot(rud040b.AoS,rud040b.CMp,'o')
-    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMp,3),rud040b.AoS))
-    xlim([-10,10])    
-    xlabel('\beta')
-    ylabel('C_{My}')
-    grid on
+%     figure(2)
+%     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+%     nexttile
+%     plot(rud040.AoS,rud040.CY,'x')
+%     hold on
+%     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CY,3),rud040.AoS))
+%     plot(rud040b.AoS,rud040b.CY,'o')
+%     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CY,3),rud040b.AoS))
+%     xlim([-10,10])
+%     xlabel('\beta [\circ]')
+%     ylabel('C_Y [-]')
+%     grid on
+%     nexttile
+%     plot(rud040.AoS,rud040.CD,'x')
+%     hold on
+%     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CD,3),rud040.AoS))
+%     plot(rud040b.AoS,rud040b.CD,'o')
+%     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CD,3),rud040b.AoS))
+%     xlim([-10,10])
+%     xlabel('\beta [\circ]')
+%     ylabel('C_D [-]')
+%     grid on
+%     nexttile
+%     plot(rud040.AoS,rud040.CMr,'x')
+%     hold on
+%     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMr,3),rud040.AoS))
+%     plot(rud040b.AoS,rud040b.CMr,'o')
+%     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMr,3),rud040b.AoS))
+%     xlim([-10,10])
+%     xlabel('\beta [\circ]')
+%     ylabel('C_{Mr} [-]')
+%     grid on
+%     nexttile
+%     plot(rud040.AoS,rud040.CMp,'x')
+%     hold on
+%     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMp,3),rud040.AoS))
+%     plot(rud040b.AoS,rud040b.CMp,'o')
+%     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMp,3),rud040b.AoS))
+%     xlim([-10,10])    
+%     xlabel('\beta [\circ]')
+%     ylabel('C_{My} [-]')
+%     grid on
         
-    figure(3) % figure for rudder stability
-    order=1;
-    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-    nexttile
-    plot(rud020.AoS,rud020.CY,'x','HandleVisibility','off')
-    hold on
-    plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CY,order),rud020.AoS))
-    plot(rud520.AoS,rud520.CY,'o','HandleVisibility','off')
-    plot(rud520.AoS,polyval(polyfit(rud520.AoS,rud520.CY,order),rud520.AoS))
-    plot(rud1020.AoS,rud1020.CY,'d','HandleVisibility','off')
-    plot(rud1020.AoS,polyval(polyfit(rud1020.AoS,rud1020.CY,order),rud1020.AoS))
-    xlim([-10,10])
-    xlabel('\beta')
-    ylabel('C_Y')
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
-    nexttile
-    plot(rud020b.AoS,rud020b.CY,'x')
-    hold on
-    plot(rud020b.AoS,polyval(polyfit(rud020b.AoS,rud020b.CY,order),rud020b.AoS))
-    plot(rud520b.AoS,rud520b.CY,'o')
-    plot(rud520b.AoS,polyval(polyfit(rud520b.AoS,rud520b.CY,order),rud520b.AoS))
-    plot(rud1020b.AoS,rud1020b.CY,'d')
-    plot(rud1020b.AoS,polyval(polyfit(rud1020b.AoS,rud1020b.CY,order),rud1020b.AoS))
-    xlim([-10,10])
-    xlabel('\beta')
-    ylabel('C_Y')
+%     figure(3) % figure for rudder stability
+%     order=1;
+%     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+%     nexttile
+%     plot(rud020.AoS,rud020.CY,'x','HandleVisibility','off')
+%     hold on
+%     plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CY,order),rud020.AoS))
+%     plot(rud520.AoS,rud520.CY,'o','HandleVisibility','off')
+%     plot(rud520.AoS,polyval(polyfit(rud520.AoS,rud520.CY,order),rud520.AoS))
+%     plot(rud1020.AoS,rud1020.CY,'d','HandleVisibility','off')
+%     plot(rud1020.AoS,polyval(polyfit(rud1020.AoS,rud1020.CY,order),rud1020.AoS))
+%     xlim([-10,10])
+%     xlabel('\beta [deg]')
+%     ylabel('C_Y [-]')
+%     legend('\delta_r=0','\delta_r=5','\delta_r=10','Location','northwest')
+%     nexttile
+%     plot(rud020b.AoS,rud020b.CY,'x')
+%     hold on
+%     plot(rud020b.AoS,polyval(polyfit(rud020b.AoS,rud020b.CY,order),rud020b.AoS))
+%     plot(rud520b.AoS,rud520b.CY,'o')
+%     plot(rud520b.AoS,polyval(polyfit(rud520b.AoS,rud520b.CY,order),rud520b.AoS))
+%     plot(rud1020b.AoS,rud1020b.CY,'d')
+%     plot(rud1020b.AoS,polyval(polyfit(rud1020b.AoS,rud1020b.CY,order),rud1020b.AoS))
+%     xlim([-10,10])
+%     xlabel('\beta [\circ]')
+%     ylabel('C_Y [-]')
+%     
+%     nexttile
+%     plot(rud040.AoS,rud040.CY,'x')
+%     hold on
+%     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CY,order),rud040.AoS))
+%     plot(rud540.AoS,rud540.CY,'o')
+%     plot(rud540.AoS,polyval(polyfit(rud540.AoS,rud540.CY,order),rud540.AoS))
+%     plot(rud1040.AoS,rud1040.CY,'d')
+%     plot(rud1040.AoS,polyval(polyfit(rud1040.AoS,rud1040.CY,order),rud1040.AoS))
+%     xlim([-10,10])
+%     xlabel('\beta [\circ]')
+%     ylabel('C_Y [-]')
+%     nexttile
+%     plot(rud040b.AoS,rud040b.CY,'x')
+%     hold on
+%     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CY,order),rud040b.AoS))
+%     plot(rud540b.AoS,rud540b.CY,'o')
+%     plot(rud540b.AoS,polyval(polyfit(rud540b.AoS,rud540b.CY,order),rud540b.AoS))
+%     plot(rud1040b.AoS,rud1040b.CY,'d')
+%     plot(rud1040b.AoS,polyval(polyfit(rud1040b.AoS,rud1040b.CY,order),rud1040b.AoS))
+%     xlim([-10,10])
+%     xlabel('\beta [\circ]')
+%     ylabel('C_Y [-]')
     
-    nexttile
-    plot(rud040.AoS,rud040.CY,'x')
-    hold on
-    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CY,order),rud040.AoS))
-    plot(rud540.AoS,rud540.CY,'o')
-    plot(rud540.AoS,polyval(polyfit(rud540.AoS,rud540.CY,order),rud540.AoS))
-    plot(rud1040.AoS,rud1040.CY,'d')
-    plot(rud1040.AoS,polyval(polyfit(rud1040.AoS,rud1040.CY,order),rud1040.AoS))
-    xlim([-10,10])
-    xlabel('\beta')
-    ylabel('C_Y')
-    nexttile
-    plot(rud040b.AoS,rud040b.CY,'x')
-    hold on
-    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CY,order),rud040b.AoS))
-    plot(rud540b.AoS,rud540b.CY,'o')
-    plot(rud540b.AoS,polyval(polyfit(rud540b.AoS,rud540b.CY,order),rud540b.AoS))
-    plot(rud1040b.AoS,rud1040b.CY,'d')
-    plot(rud1040b.AoS,polyval(polyfit(rud1040b.AoS,rud1040b.CY,order),rud1040b.AoS))
-    xlim([-10,10])
-    xlabel('\beta')
-    ylabel('C_Y')
-    
-    figure(4) % figure for thrust coefficient
-    t = tiledlayout(1,2,'TileSpacing','Compact','Padding','Compact');
-    nexttile
-    plot(rud020b.AoS,rud020b.dPb,'o','LineStyle','-')
-    hold on
-    plot(rud520b.AoS,rud520b.dPb,'o','LineStyle','-')
-    plot(rud1020b.AoS,rud1020b.dPb,'o','LineStyle','-')
-    plot(rud020.AoS,rud020.dPb,'x','LineStyle','--')
-    hold on
-    plot(rud520.AoS,rud520.dPb,'x','LineStyle','--')
-    plot(rud1020.AoS,rud1020.dPb,'x','LineStyle','--')
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','\delta_{r,OEI}=0','\delta_{r,OEI}=5','\delta_{r,OEI}=10','Location','north')
-    xlabel('\beta [\circ]')
-    ylabel('T_C [-]')
-    xlim([-10 10])
-    title('U_{\infty} = 20 m/s')
-    grid on
-    nexttile
-    plot(rud040b.AoS,rud040b.dPb,'o','LineStyle','-')
-    hold on
-    plot(rud540b.AoS,rud540b.dPb,'o','LineStyle','-')
-    plot(rud1040b.AoS,rud1040b.dPb,'o','LineStyle','-')
-    plot(rud040.AoS,rud040.dPb,'x','LineStyle','--')
-    hold on
-    plot(rud540.AoS,rud540.dPb,'x','LineStyle','--')
-    plot(rud1040.AoS,rud1040.dPb,'x','LineStyle','--')
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','\delta_{r,OEI}=0','\delta_{r,OEI}=5','\delta_{r,OEI}=10','Location','north')
-    xlabel('\beta [\circ]')
-    ylabel('T_C [-]')
-    xlim([-10 10])
-    title('U_{\infty} = 40 m/s')
-    grid on
+%     figure(4) % figure for thrust coefficient
+%     t = tiledlayout(1,2,'TileSpacing','Compact','Padding','Compact');
+%     nexttile
+%     plot(rud020b.AoS,rud020b.dPb,'o','LineStyle','-')
+%     hold on
+%     plot(rud520b.AoS,rud520b.dPb,'o','LineStyle','-')
+%     plot(rud1020b.AoS,rud1020b.dPb,'o','LineStyle','-')
+%     plot(rud020.AoS,rud020.dPb,'x','LineStyle','--')
+%     hold on
+%     plot(rud520.AoS,rud520.dPb,'x','LineStyle','--')
+%     plot(rud1020.AoS,rud1020.dPb,'x','LineStyle','--')
+%     legend('\delta_r=0','\delta_r=5','\delta_r=10','\delta_{r,OEI}=0','\delta_{r,OEI}=5','\delta_{r,OEI}=10','Location','north')
+%     xlabel('\beta [\circ]')
+%     ylabel('T_C [-]')
+%     xlim([-10 10])
+%     title('v = 20 m/s')
+%     grid on
+%     nexttile
+%     plot(rud040b.AoS,rud040b.dPb,'o','LineStyle','-')
+%     hold on
+%     plot(rud540b.AoS,rud540b.dPb,'o','LineStyle','-')
+%     plot(rud1040b.AoS,rud1040b.dPb,'o','LineStyle','-')
+%     plot(rud040.AoS,rud040.dPb,'x','LineStyle','--')
+%     hold on
+%     plot(rud540.AoS,rud540.dPb,'x','LineStyle','--')
+%     plot(rud1040.AoS,rud1040.dPb,'x','LineStyle','--')
+%     legend('\delta_r=0','\delta_r=5','\delta_r=10','\delta_{r,OEI}=0','\delta_{r,OEI}=5','\delta_{r,OEI}=10','Location','north')
+%     xlabel('\beta [\circ]')
+%     ylabel('T_C [-]')
+%     xlim([-10 10])
+%     title('v = 40 m/s')
+%     grid on
     
     figure("defaultAxesFontSize", 18) % figure for thrust coefficient
     t = tiledlayout(1,2,'TileSpacing','Compact','Padding','Compact');
+    lw=1.5;
+    mw=2;
     nexttile
-    plot(rud020b.AoS,rud020b.dPb,'o','LineWidth',2)
+    plot(rud020b.AoS,rud020b.dPb,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
     hold on
-    plot(rud020b.AoS,polyval(polyfit(rud020b.AoS,rud020b.dPb,3),rud020b.AoS),'--','LineWidth',2)
-    plot(rud520b.AoS,rud520b.dPb,'o','LineWidth',2)
-    plot(rud520b.AoS,polyval(polyfit(rud520b.AoS,rud520b.dPb,3),rud520b.AoS),'--','LineWidth',2)
-    plot(rud1020b.AoS,rud1020b.dPb,'o','LineWidth',2)
-    plot(rud1020b.AoS,polyval(polyfit(rud1020b.AoS,rud1020b.dPb,3),rud1020b.AoS),'--','LineWidth',2)
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','fit \delta_r=0','fit \delta_r=5','fit \delta_r=10','FontSize',14,'Location','eastoutside')
+    plot(rud020b.AoS,polyval(polyfit(rud020b.AoS,rud020b.dPb,3),rud020b.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud520b.AoS,rud520b.dPb,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud520b.AoS,polyval(polyfit(rud520b.AoS,rud520b.dPb,3),rud520b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud1020b.AoS,rud1020b.dPb,'o','LineWidth',mw,'Color',[0.9290, 0.6940, 0.1250])
+    plot(rud1020b.AoS,polyval(polyfit(rud1020b.AoS,rud1020b.dPb,3),rud1020b.AoS),'--','LineWidth',lw,'Color',[0.9290, 0.6940, 0.1250])
+%     legend('\delta_r=0','\delta_r=5','\delta_r=10','fit \delta_r=0','fit \delta_r=5','fit \delta_r=10','FontSize',14,'Location','eastoutside')
     xlabel('\beta [\circ]')
     ylabel('T_C [-]')
     xlim([-10 10])
     title('U_{\infty} = 20 m/s')
     grid on
     nexttile
-    plot(rud040b.AoS,rud040b.dPb,'o','LineWidth',2)
+    plot(rud040b.AoS,rud040b.dPb,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
     hold on
-    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.dPb,3),rud040b.AoS),'--','LineWidth',2)
-    plot(rud540b.AoS,rud540b.dPb,'o','LineWidth',2)
-    plot(rud540b.AoS,polyval(polyfit(rud540b.AoS,rud540b.dPb,3),rud540b.AoS),'--','LineWidth',2)
-    plot(rud1040b.AoS,rud1040b.dPb,'o','LineWidth',2)
-    plot(rud1040b.AoS,polyval(polyfit(rud1040b.AoS,rud1040b.dPb,3),rud1040b.AoS),'--','LineWidth',2)
-    legend('\delta_r=0','\delta_r=5','\delta_r=10','fit \delta_r=0','fit \delta_r=5','fit \delta_r=10','FontSize',14,'Location','eastoutside')
+    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.dPb,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud540b.AoS,rud540b.dPb,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud540b.AoS,polyval(polyfit(rud540b.AoS,rud540b.dPb,3),rud540b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud1040b.AoS,rud1040b.dPb,'o','LineWidth',mw,'Color',[0.9290, 0.6940, 0.1250])
+    plot(rud1040b.AoS,polyval(polyfit(rud1040b.AoS,rud1040b.dPb,3),rud1040b.AoS),'--','LineWidth',lw,'Color',[0.9290, 0.6940, 0.1250])
+    legend('\delta_r=0','\delta_r=5','\delta_r=10','fit \delta_r=0','fit \delta_r=5','fit \delta_r=10','FontSize',14,'Location','northeast')
     xlabel('\beta [\circ]')
     ylabel('T_C [-]')
     xlim([-10 10])
     title('U_{\infty} = 40 m/s')
     grid on
-    set(gcf, 'Position', get(0, 'Screensize'));
-    saveas(gcf,'test.pdf')
+%     set(gcf, 'Position', get(0, 'Screensize'));
+
+%     figure("defaultAxesFontSize", 18) % figure for thrust coefficient
+%     t = tiledlayout(2,3,'TileSpacing','Compact','Padding','Compact');
+%     nexttile
+%     plot(rud020.AoS,rud020.CY,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+%     hold on
+%     plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CY,3),rud020.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+%     plot(rud020b.AoS([1:4, 7:10]),rud020b.CY([1:4, 7:10]),'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+%     plot(rud020b.AoS([1:4, 7:10]),polyval(polyfit(rud020b.AoS([1:4, 7:10]),rud020b.CY([1:4, 7:10]),3),rud020b.AoS([1:4, 7:10])),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+%     ylabel('C_Y')
+%     xlabel('\beta')
+%     xlim([-11 11])
+%     legend('OEI','OEI fit','Both engines on','BEO fit')
+%     nexttile
+%     plot(rud020.AoS,rud020.CMy,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+%     hold on
+%     plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CMy,3),rud020.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+%     plot(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+%     plot(rud020b.AoS([1:4, 7:10]),polyval(polyfit(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),3),rud020b.AoS([1:4, 7:10])),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+%     ylabel('C_{My}')
+%     xlabel('\beta')
+%     xlim([-11 11])
+%     nexttile
+%     plot(rud040.AoS,rud040.CY,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+%     hold on
+%     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CY,3),rud040.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+%     plot(rud040b.AoS,rud040b.CY,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+%     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CY,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+%     ylabel('C_Y')
+%     xlabel('\beta')
+%     xlim([-11 11])
+%     nexttile
+%     plot(rud040.AoS,rud040.CMy,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+%     hold on
+%     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMy,3),rud040.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+%     plot(rud040b.AoS,rud040b.CMy,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+%     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMy,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+%     ylabel('C_{My}')
+%     xlabel('\beta')
+%     xlim([-11 11])
+
+    figure("defaultAxesFontSize", 18) % figure for thrust coefficient
+    t = tiledlayout(2,3,'TileSpacing','Compact','Padding','Compact');
+    nexttile
+    plot(rud020.AoS,rud020.CY,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CY,3),rud020.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CY([1:4, 7:10]),'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud020b.AoS([1:4, 7:10]),polyval(polyfit(rud020b.AoS([1:4, 7:10]),rud020b.CY([1:4, 7:10]),3),rud020b.AoS([1:4, 7:10])),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    ylabel('C_Y [-]')
+    xlabel('\beta [\circ]')
+    xlim([-11 11])
+    title('U_{\infty} = 20 m/s')
+    grid on
+    legend('OEI','OEI fit','BEO','BEO fit')
+    nexttile
+    plot(rud020.AoS,rud020.CMy,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CMy,3),rud020.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud020b.AoS([1:4, 7:10]),polyval(polyfit(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),3),rud020b.AoS([1:4, 7:10])),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    ylabel('C_{My} [-]')
+    xlabel('\beta [\circ]')
+    xlim([-11 11])
+    title('U_{\infty} = 20 m/s')
+    grid on
+    nexttile
+    plot(rud020.AoS,rud020.CMr,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CMr,3),rud020.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud020b.AoS([1:4, 7:10]),rud020b.CMr([1:4, 7:10]),'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud020b.AoS([1:4, 7:10]),polyval(polyfit(rud020b.AoS([1:4, 7:10]),rud020b.CMr([1:4, 7:10]),3),rud020b.AoS([1:4, 7:10])),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    ylabel('C_{Mr} [-]')
+    xlabel('\beta [\circ]')
+    xlim([-11 11])
+    grid on
+    title('U_{\infty} = 20 m/s')
+    nexttile
     
+    plot(rud040.AoS,rud040.CY,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CY,3),rud040.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud040b.AoS,rud040b.CY,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CY,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    ylabel('C_Y [-]')
+    xlabel('\beta [\circ]')
+    xlim([-11 11])
+    title('U_{\infty} = 40 m/s')
+    grid on
+    nexttile
+    plot(rud040.AoS,rud040.CMy,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMy,3),rud040.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud040b.AoS,rud040b.CMy,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMy,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    ylabel('C_{My} [-]')
+    xlabel('\beta [\circ]')
+    xlim([-11 11])
+    title('U_{\infty} = 40 m/s')
+    grid on
+    nexttile
+    plot(rud040.AoS,rud040.CMr,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMr,3),rud040.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud040b.AoS,rud040b.CMr,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMr,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    ylabel('C_{Mr} [-]')
+    xlabel('\beta [\circ]')
+    xlim([-11 11])
+    title('U_{\infty} = 40 m/s')
+    grid on
 %     figure(5)
 %     plot(jVar.J_M1,jVar.dPb.*jVar.J_M1.^2*pi/8,'x')
 %     hold on
