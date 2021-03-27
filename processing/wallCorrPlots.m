@@ -35,7 +35,7 @@ function  wallCorrPlots(dataStruct, blockageStruct, dalpha, ...
 
         % streamline curvature
         streamlineTable = origTable;
-        streamlineTable.CMp = streamlineTable.CMp + dCmSC.(nameMeas);
+        streamlineTable.CMp25c = streamlineTable.CMp25c + dCmSC.(nameMeas);
         streamlineTable.CD = streamlineTable.CD + dCdSC.(nameMeas);
         streamlineTable.AoA = streamlineTable.AoA + dalpha.(nameMeas);
 
