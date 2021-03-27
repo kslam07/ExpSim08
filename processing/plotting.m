@@ -380,7 +380,7 @@ function plotting(dataStruct, nameMeas)
     plot(aosspace, AoSTrim20b, "DisplayName", "V20",'Color',[0, 0.4470, 0.7410])
     xlabel("\beta [-]")
     ylabel("\delta_{r,trim} [\circ]")
-    legend
+    legend('OEI - U_{\infty} = 20','OEI - U_{\infty} = 40','BEO - U_{\infty} = 20','BEO - U_{\infty} = 40')
     grid
     
     %% plots for trimming
@@ -491,7 +491,7 @@ function plotting(dataStruct, nameMeas)
     plot(rud040b.AoS,rud040b.CD,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
     plot(rud020b.AoS([1:4, 7:10]),rud020b.CD([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
-    xlim([-10,10])
+    xlim([-11,11])
     xlabel('\beta [\circ]')
     ylabel('C_D [-]')
     grid on
@@ -500,7 +500,7 @@ function plotting(dataStruct, nameMeas)
     plot(rud040b.AoS,rud040b.CY,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
     plot(rud020b.AoS([1:4, 7:10]),rud020b.CY([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
-    xlim([-10,10])
+    xlim([-11,11])
     xlabel('\beta [\circ]')
     ylabel('C_Y [-]')
     grid on
@@ -508,7 +508,7 @@ function plotting(dataStruct, nameMeas)
     plot(rud040b.AoS,rud040b.CL,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
     plot(rud020b.AoS([1:4, 7:10]),rud020b.CL([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
-    xlim([-10,10])
+    xlim([-11,11])
     xlabel('\beta [\circ]')
     ylabel('C_L [-]')
     grid on
@@ -516,7 +516,7 @@ function plotting(dataStruct, nameMeas)
     plot(rud040b.AoS,rud040b.CMr,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
     plot(rud020b.AoS([1:4, 7:10]),rud020b.CMr([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
-    xlim([-10,10])   
+    xlim([-11,11])   
     xlabel('\beta [\circ]')
     ylabel('C_{Mr} [-]')
     grid on
@@ -524,7 +524,8 @@ function plotting(dataStruct, nameMeas)
     plot(rud040b.AoS,rud040b.CMp25c,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
     plot(rud020b.AoS([1:4, 7:10]),rud020b.CMp25c([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
-    xlim([-10,10])
+    xlim([-11,11])
+    ylim([-0.25 -0.09])
     xlabel('\beta [\circ]')
     ylabel('C_{Mp25c} [-]')
     grid on
@@ -532,9 +533,9 @@ function plotting(dataStruct, nameMeas)
     plot(rud040b.AoS,rud040b.CMy,'o','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
     hold on
     plot(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),'x','MarkerSize',8,'LineStyle','--','LineWidth',1.2)
-    xlim([-10,10])   
+    xlim([-11,11])   
     xlabel('\beta [\circ]')
-    ylabel('C_{My} [-]')
+    ylabel('C_{N} [-]')
     grid on
 
     
@@ -759,7 +760,7 @@ function plotting(dataStruct, nameMeas)
     plot(rud020.AoS,polyval(polyfit(rud020.AoS,rud020.CMy,3),rud020.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
     plot(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
     plot(rud020b.AoS([1:4, 7:10]),polyval(polyfit(rud020b.AoS([1:4, 7:10]),rud020b.CMy([1:4, 7:10]),3),rud020b.AoS([1:4, 7:10])),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
-    ylabel('C_{My} [-]')
+    ylabel('C_{N} [-]')
     xlabel('\beta [\circ]')
     xlim([-11 11])
     title('U_{\infty} = 20 m/s')
@@ -804,11 +805,61 @@ function plotting(dataStruct, nameMeas)
     plot(rud040.AoS,polyval(polyfit(rud040.AoS,rud040.CMr,3),rud040.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
     plot(rud040b.AoS,rud040b.CMr,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
     plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.CMr,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
-    ylabel('C_{Mr} [-]')
+    ylabel('C_{N} [-]')
     xlabel('\beta [\circ]')
     xlim([-11 11])
     title('U_{\infty} = 40 m/s')
     grid on
+    
+    figure("defaultAxesFontSize", 18) % figure for thrust coefficient
+    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+    lw=1.5;
+    mw=2;
+    nexttile
+    plot(rud020b.AoS,rud020b.dPb.*rud020b.J_M1.^2*pi/8,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud020b.AoS,polyval(polyfit(rud020b.AoS,rud020b.dPb.*rud020b.J_M1.^2*pi/8,3),rud020b.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud520b.AoS,rud520b.dPb.*rud520b.J_M1.^2*pi/8,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud520b.AoS,polyval(polyfit(rud520b.AoS,rud520b.dPb.*rud520b.J_M1.^2*pi/8,3),rud520b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud1020b.AoS,rud1020b.dPb.*rud1020b.J_M1.^2*pi/8,'o','LineWidth',mw,'Color',[0.9290, 0.6940, 0.1250])
+    plot(rud1020b.AoS,polyval(polyfit(rud1020b.AoS,rud1020b.dPb.*rud1020b.J_M1.^2*pi/8,3),rud1020b.AoS),'--','LineWidth',lw,'Color',[0.9290, 0.6940, 0.1250])
+%     legend('\delta_r=0','\delta_r=5','\delta_r=10','fit \delta_r=0','fit \delta_r=5','fit \delta_r=10','FontSize',14,'Location','eastoutside')
+    legend('\delta_r=0','\delta_r=5','\delta_r=10','fit \delta_r=0','fit \delta_r=5','fit \delta_r=10','Location','northeast','FontSize',16)
+    xlabel('\beta [\circ]')
+    ylabel('C_T [-]')
+    xlim([-11 11])
+    title('U_{\infty} = 20 m/s')
+    grid on
+    nexttile
+    plot(rud040b.AoS,rud040b.dPb.*rud040b.J_M1.^2*pi/8,'o','LineWidth',mw,'Color',[0, 0.4470, 0.7410])
+    hold on
+    plot(rud040b.AoS,polyval(polyfit(rud040b.AoS,rud040b.dPb.*rud040b.J_M1.^2*pi/8,3),rud040b.AoS),'--','LineWidth',lw,'Color',[0, 0.4470, 0.7410])
+    plot(rud540b.AoS,rud540b.dPb.*rud540b.J_M1.^2*pi/8,'o','LineWidth',mw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud540b.AoS,polyval(polyfit(rud540b.AoS,rud540b.dPb.*rud540b.J_M1.^2*pi/8,3),rud540b.AoS),'--','LineWidth',lw,'Color',[0.8500, 0.3250, 0.0980])
+    plot(rud1040b.AoS,rud1040b.dPb.*rud1040b.J_M1.^2*pi/8,'o','LineWidth',mw,'Color',[0.9290, 0.6940, 0.1250])
+    plot(rud1040b.AoS,polyval(polyfit(rud1040b.AoS,rud1040b.dPb.*rud1040b.J_M1.^2*pi/8,3),rud1040b.AoS),'--','LineWidth',lw,'Color',[0.9290, 0.6940, 0.1250])
+    xlabel('\beta [\circ]')
+    ylabel('C_T [-]')
+    xlim([-11 11])
+    title('U_{\infty} = 40 m/s')
+    grid on
+    nexttile
+    rud0=sortrows(dataStruct.i0_org.rud0,[19 24 6]);
+    rud020b=sortrows(rud0(10:19,:),'AoS');
+    rud040b=sortrows(rud0(30:38,:),'AoS');    
+    plot([-10,-6,-4,-2,0,2,4,6,10],[0.0555,0.0408,0.0462,0.0485,0.0513,0.0485,0.0462,0.0408,0.0555])
+    hold on
+    plot(rud020b.AoS,rud020b.CT)
+    xlabel('\beta [\circ]')
+    ylabel('C_T [-]')
+    xlim([-11 11])
+    nexttile
+    plot([-10,-6,-4,-2,0,2,4,6,10],[0.0221,0.0359,0.0415,0.0433,0.0440,0.0433,0.0415,0.0359,0.0221])
+    hold on
+    plot(rud040b.AoS,rud040b.CT)
+    xlabel('\beta [\circ]')
+    ylabel('C_T [-]')
+    xlim([-11 11])
 %     figure(5)
 %     plot(jVar.J_M1,jVar.dPb.*jVar.J_M1.^2*pi/8,'x')
 %     hold on
@@ -816,7 +867,7 @@ function plotting(dataStruct, nameMeas)
     
     function delta_r = findTrimAngle(cstLst, betaLst, dyddrLst, ...
             dydbetaLst)
-       delta_r = (-dydbetaLst.*betaLst-cstLst)./(dyddrLst);
+       delta_r = (dydbetaLst.*betaLst-cstLst)./(dyddrLst);
     end
     
 end
