@@ -116,9 +116,9 @@ end
 data = subtractTailOff(data, "i0");
 %% remove model off data from measurements and transform aero to body coeff
 data = removeModelOff(data, "i0");
+wallCorrPlots(data, blockageStruct, dalpha, dCmSC, dCdSC);
 %% translate moments from c/4 to CG
-data = translateMoments(data, [0.48 0 0], "i0");
-
+% data = translateMoments(data, [0.48 0 0], "i0");
 
 %% Plotting 
 %plotting(data)
