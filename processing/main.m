@@ -15,10 +15,6 @@ measPath = "OUTPUT.xls";
 tailOffPath = "./DATA/TailOffData.xlsx";
 data = load2Struct(measPath, tailOffPath);
 
-nIter = 10;                     % number of iterations
-res   = 1;                      % residual
-resThrust = 1;
-
 %% correct prop. off data using wall corrections
 data = corrPropoff(data);
 
@@ -49,24 +45,24 @@ data.i0_org = data.i0;
 
 fieldNames = fieldnames(data.i0);               % get names of tables
 
-% compute thrust and input them in iterative matrix "i1"
+%% compute thrust and input them in iterative matrix "i1"
 data = removeThrustUpdate.mainFunction(data);
 
-% compute TC=0 CL and CD based on Eckert method
+%% compute TC=0 CL and CD based on Eckert method
 data = eckertMethod(data, "i1");
 
 % get correction factors based on values in matrix "i1"
-% wake blockage
+%% wake blockage
 epsWB = corrWakeblockage(data, "i2");
 
-% streamline curvature
+%% streamline curvature
 [dalpha, dCmSC, dCdSC] = corrStreamlines(data, "i2");
 
 % slipstream; can take i1 since it doesn't matter
 epsSS = corrSlipstream(data, "i1");
 
 blockageStruct = struct();
-% APPLY CORRECTIONS
+%% APPLY CORRECTIONS
 for iName = 2:4
     nameMeas = cell2mat(fieldNames(iName));
     % sum all blockage + slipstream eps

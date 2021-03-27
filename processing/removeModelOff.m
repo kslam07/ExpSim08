@@ -47,12 +47,18 @@ function dataStruct = removeModelOff(dataStruct, idxTable)
         AoSdata=modelOff{1:end-3,11:17};
         
         % interpolate model off data
-        CDInterpBeta = interp1(AoSdata(:,1), AoSdata(:,2), data.AoS);
-        CYInterpBeta = interp1(AoSdata(:,1), AoSdata(:,3), data.AoS);
-        CLInterpBeta = interp1(AoSdata(:,1), AoSdata(:,4), data.AoS);
-        CMrInterpBeta = interp1(AoSdata(:,1), AoSdata(:,5), data.AoS);
-        CMpInterpBeta = interp1(AoSdata(:,1), AoSdata(:,6), data.AoS);
-        CMyInterpBeta = interp1(AoSdata(:,1), AoSdata(:,7), data.AoS);
+        CDInterpBeta = interp1(AoSdata(:,1), AoSdata(:,2), data.AoS, ...
+            "linear",  "extrap");
+        CYInterpBeta = interp1(AoSdata(:,1), AoSdata(:,3), data.AoS, ...
+            "linear", "extrap");
+        CLInterpBeta = interp1(AoSdata(:,1), AoSdata(:,4), data.AoS, ...
+            "linear", "extrap");
+        CMrInterpBeta = interp1(AoSdata(:,1), AoSdata(:,5), data.AoS, ...
+            "linear", "extrap");
+        CMpInterpBeta = interp1(AoSdata(:,1), AoSdata(:,6), data.AoS, ...
+            "linear", "extrap");
+        CMyInterpBeta = interp1(AoSdata(:,1), AoSdata(:,7), data.AoS, ...
+            "linear", "extrap");
 
         % group them in array
         AoSEffect = [CDInterpBeta, CYInterpBeta, CLInterpBeta, ...
