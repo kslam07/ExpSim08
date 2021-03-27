@@ -19,8 +19,8 @@ function [dataStruct] = corrTailoff(dataStruct)
             
             %blockage
             p = polyfit(tmp.CL.^2,tmp.CD,1);
-            Cdi = p(1);
             Cd0 = p(2);
+            Cdi = p(1).*(tmp.CL.^2)+Cd0;            
             eps_wb0 = S/(4*C)*Cd0;
             Cds = tmp.CD - Cdi -Cd0;
             Cds(Cds<0) = 0;
@@ -45,9 +45,7 @@ function [dataStruct] = corrTailoff(dataStruct)
             p = polyfit(tmp.AoA,tmp.CL,1);
             Cla = p(1);
             dataStruct.tailoffAoS.CMp25c(idx_tmp) = dataStruct.tailoffAoS.CMp25c(idx_tmp) + ...
-                0.125.*dataStruct.tailoffAoS.AoA(idx_tmp).*Cla; 
-            
-            
+                0.125.*dataStruct.tailoffAoS.AoA(idx_tmp).*Cla;             
         end
     end
 end
