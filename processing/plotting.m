@@ -372,17 +372,6 @@ function plotting(dataStruct, nameMeas)
     AoSTrim20b = findTrimAngle(CMy0b20b, aosspace, dCMydd20b, dCMydb20b); 
     AoSTrim40b = findTrimAngle(CMy0b40b, aosspace, dCMydd40b, dCMydb40b);
     
-<<<<<<< HEAD
-    figure(10)
-    figure("defaultAxesFontSize", 14)
-    hold on
-    plot(aosspace, AoSTrim20, "DisplayName", "V20 - OEI")
-    plot(aosspace, AoSTrim40, "DisplayName", "V40 - OEI")
-    plot(aosspace, AoSTrim40b, "DisplayName", "V40")
-    plot(aosspace, AoSTrim20b, "DisplayName", "V20")
-    xlabel("\beta")
-    ylabel("\delta_{r,trim}")
-=======
     figure("defaultAxesFontSize", 14)
     hold on
     plot(aosspace, AoSTrim20, "DisplayName", "V20 - OEI",'LineStyle','--','Color',[0, 0.4470, 0.7410])
@@ -391,7 +380,6 @@ function plotting(dataStruct, nameMeas)
     plot(aosspace, AoSTrim20b, "DisplayName", "V20",'Color',[0, 0.4470, 0.7410])
     xlabel("\beta [-]")
     ylabel("\delta_{r,trim} [\circ]")
->>>>>>> a12dc87d4188690148eee22f867b8a05df3730d2
     legend
     grid
     
