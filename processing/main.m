@@ -23,7 +23,8 @@ resThrust = 1;
 data = corrPropoff(data);
 
 %% correct tail off data using wall corrections
-% data = corrPropoff(data);
+data = corrTailoff(data);
+data = removeModelOff(data, "tailoffAoS");
 %% Correct model off data
 data.i0_org = data.i0;
 
@@ -91,7 +92,7 @@ for iName = 2:4
     % correct drag coefficient
     dCDtot = dCD + dCdSC.(nameMeas);
     % correct pitching moment coefficient
-    dCMp25c = dCMp25c + dCmSC.(nameMeas);
+    dCMp25cTot = dCMp25c + dCmSC.(nameMeas);
 
     % Rewrite values in "i0" matrix; repeat
     data.i0.(nameMeas).CL       = data.i0.(nameMeas).CL + dCL;
@@ -99,7 +100,7 @@ for iName = 2:4
     data.i0.(nameMeas).CYaw     = data.i0.(nameMeas).CYaw + dCYaw;
     data.i0.(nameMeas).CMr      = data.i0.(nameMeas).CMr + dCMr;
     data.i0.(nameMeas).CMp      = data.i0.(nameMeas).CMp + dCMp;
-    data.i0.(nameMeas).CMp25c   = data.i0.(nameMeas).CMp25c + dCMp25c;
+    data.i0.(nameMeas).CMp25c   = data.i0.(nameMeas).CMp25c + dCMp25cTot;
     data.i0.(nameMeas).CMy      = data.i0.(nameMeas).CMy + dCMy;
     data.i0.(nameMeas).V        = velCorr;
     data.i0.(nameMeas).AoA      = data.i0.(nameMeas).AoA + dalpha.(nameMeas);

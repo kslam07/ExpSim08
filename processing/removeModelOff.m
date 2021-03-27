@@ -45,7 +45,7 @@ function dataStruct = removeModelOff(dataStruct, idxTable)
 
         % makes fit of forces in aero frame
         AoSdata=modelOff{1:end-3,11:17};
-
+        
         % interpolate model off data
         CDInterpBeta = interp1(AoSdata(:,1), AoSdata(:,2), data.AoS);
         CYInterpBeta = interp1(AoSdata(:,1), AoSdata(:,3), data.AoS);
@@ -71,10 +71,13 @@ function dataStruct = removeModelOff(dataStruct, idxTable)
         data.CYaw=data.CYaw-Cy;
         data.CL=data.CL-CL;
         data.CMr=data.CMr-CMr;
-        data.CMp=data.CMp-CMp;
-        data.CMp25c=data.CMp25c-CMp;
         data.CMy=data.CMy-CMy;
+        data.CMp25c=data.CMp25c-CMp;
 
+        if idxTable ~= "tailoffAoS"
+            data.CMp=data.CMp-CMp;
+        end
+        
         % rotate all preceding and model-off correction from aero to body
         for idx=1:length(data.AoS)
             dcm=angle2dcm(deg2rad(data.AoS(idx)), deg2rad(data.AoA(idx)), 0);
@@ -84,8 +87,11 @@ function dataStruct = removeModelOff(dataStruct, idxTable)
             data.CY(idx)=model(2);
             data.CN(idx)=model(3);
         end
-
-        dataStruct.(idxTable).(nameMeas) = data;
+        if idxTable ~= "tailoffAoS"
+            dataStruct.(idxTable).(nameMeas) = data;
+        else
+            dataStruct.(idxTable) = data;
+        end
     end
         
         
