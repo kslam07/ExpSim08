@@ -61,164 +61,164 @@ function [] = plot_Re(data)
     xlabel('\beta [\circ]');
     ylabel('C_{My}');
 
-    figure(2);%rudder 0 degrees both engines
-    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-    title(t,'rudder 0 degrees');
-    nexttile;
-    plot(rud020b.AoS, rud020b.CL,'k-o');
-    hold on
-    plot(rud040b.AoS, rud040b.CL,'b-x');
-    xlabel('\beta [deg]');
-    ylabel('C_{L}');
-    legend('20m/s', '40m/s');    
-    nexttile;
-    plot(rud020b.AoS, rud020b.CY,'k-o');
-    hold on
-    plot(rud040b.AoS, rud040b.CY,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{Y}');
-    nexttile;
-    plot(rud020b.AoS, rud020b.CD,'k-o');
-    hold on
-    plot(rud040b.AoS, rud040b.CD,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{D}');
-    nexttile;
-    plot(rud020b.AoS, rud020b.CMy,'k-o');
-    hold on
-    plot(rud040b.AoS, rud040b.CMy,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{My}');
-    
-    figure(3);%rudder 5 degrees OEI
-    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-    title(t,'rudder 5 degrees OEI');
-    nexttile;
-    plot(rud520.AoS, rud520.CL,'k-o');
-    hold on
-    plot(rud540.AoS, rud540.CL,'b-x');
-    xlabel('\beta [deg]');
-    ylabel('C_{L}');
-    legend('20m/s', '40m/s');    
-    nexttile;
-    plot(rud520.AoS, rud520.CY,'k-o');
-    hold on
-    plot(rud540.AoS, rud540.CY,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{Y}');
-    nexttile;
-    plot(rud520.AoS, rud520.CD,'k-o');
-    hold on
-    plot(rud540.AoS, rud540.CD,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{D}');
-    nexttile;
-    plot(rud520.AoS, rud520.CMy,'k-o');
-    hold on
-    plot(rud540.AoS, rud540.CMy,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{My}');
-
-    figure(4);%rudder 5 degrees both engines
-    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-    title(t,'rudder 5 degrees');
-    nexttile;
-    plot(rud520b.AoS, rud520b.CL,'k-o');
-    hold on
-    plot(rud540b.AoS, rud540b.CL,'b-x');
-    xlabel('\beta [deg]');
-    ylabel('C_{L}');
-    legend('20m/s', '40m/s');    
-    nexttile;
-    plot(rud520b.AoS, rud520b.CY,'k-o');
-    hold on
-    plot(rud540b.AoS, rud540b.CY,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{Y}');
-    nexttile;
-    plot(rud520b.AoS, rud520b.CD,'k-o');
-    hold on
-    plot(rud540b.AoS, rud540b.CD,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{D}');
-    nexttile;
-    plot(rud020b.AoS, rud020b.CMy,'k-o');
-    hold on
-    plot(rud040b.AoS, rud040b.CMy,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{My}');
-    
-    figure(5);%rudder 10 degrees OEI
-    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-    title(t,'rudder 10 degrees OEI');
-    nexttile;
-    plot(rud1020.AoS, rud1020.CL,'k-o');
-    hold on
-    plot(rud1040.AoS, rud1040.CL,'b-x');
-    xlabel('\beta [deg]');
-    ylabel('C_{L}');
-    legend('20m/s', '40m/s');    
-    nexttile;
-    plot(rud1020.AoS, rud1020.CY,'k-o');
-    hold on
-    plot(rud1040.AoS, rud1040.CY,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{Y}');
-    nexttile;
-    plot(rud1020.AoS, rud1020.CD,'k-o');
-    hold on
-    plot(rud1040.AoS, rud1040.CD,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{D}');
-    nexttile;
-    plot(rud1020.AoS, rud1020.CMy,'k-o');
-    hold on
-    plot(rud1040.AoS, rud1040.CMy,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{My}');
-
-    figure(6);%rudder 10 degrees both engines
-    t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
-    title(t,'rudder 10 degrees');
-    nexttile;
-    plot(rud1020b.AoS, rud1020b.CL,'k-o');
-    hold on
-    plot(rud1040b.AoS, rud1040b.CL,'b-x');
-    xlabel('\beta [deg]');
-    ylabel('C_{L}');
-    legend('20m/s', '40m/s');    
-    nexttile;
-    plot(rud1020b.AoS, rud1020b.CY,'k-o');
-    hold on
-    plot(rud1040b.AoS, rud1040b.CY,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{Y}');
-    nexttile;
-    plot(rud1020b.AoS, rud1020b.CD,'k-o');
-    hold on
-    plot(rud1040b.AoS, rud1040b.CD,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{D}');
-    nexttile;
-    plot(rud1020b.AoS, rud1020b.CMy,'k-o');
-    hold on
-    plot(rud1040b.AoS, rud1040b.CMy,'b-x');
-    legend('20m/s', '40m/s');
-    xlabel('\beta [deg]');
-    ylabel('C_{My}');       
+%     figure(2);%rudder 0 degrees both engines
+%     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+%     title(t,'rudder 0 degrees');
+%     nexttile;
+%     plot(rud020b.AoS, rud020b.CL,'k-o');
+%     hold on
+%     plot(rud040b.AoS, rud040b.CL,'b-x');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{L}');
+%     legend('20m/s', '40m/s');    
+%     nexttile;
+%     plot(rud020b.AoS, rud020b.CY,'k-o');
+%     hold on
+%     plot(rud040b.AoS, rud040b.CY,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{Y}');
+%     nexttile;
+%     plot(rud020b.AoS, rud020b.CD,'k-o');
+%     hold on
+%     plot(rud040b.AoS, rud040b.CD,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{D}');
+%     nexttile;
+%     plot(rud020b.AoS, rud020b.CMy,'k-o');
+%     hold on
+%     plot(rud040b.AoS, rud040b.CMy,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{My}');
+%     
+%     figure(3);%rudder 5 degrees OEI
+%     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+%     title(t,'rudder 5 degrees OEI');
+%     nexttile;
+%     plot(rud520.AoS, rud520.CL,'k-o');
+%     hold on
+%     plot(rud540.AoS, rud540.CL,'b-x');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{L}');
+%     legend('20m/s', '40m/s');    
+%     nexttile;
+%     plot(rud520.AoS, rud520.CY,'k-o');
+%     hold on
+%     plot(rud540.AoS, rud540.CY,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{Y}');
+%     nexttile;
+%     plot(rud520.AoS, rud520.CD,'k-o');
+%     hold on
+%     plot(rud540.AoS, rud540.CD,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{D}');
+%     nexttile;
+%     plot(rud520.AoS, rud520.CMy,'k-o');
+%     hold on
+%     plot(rud540.AoS, rud540.CMy,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{My}');
+% 
+%     figure(4);%rudder 5 degrees both engines
+%     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+%     title(t,'rudder 5 degrees');
+%     nexttile;
+%     plot(rud520b.AoS, rud520b.CL,'k-o');
+%     hold on
+%     plot(rud540b.AoS, rud540b.CL,'b-x');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{L}');
+%     legend('20m/s', '40m/s');    
+%     nexttile;
+%     plot(rud520b.AoS, rud520b.CY,'k-o');
+%     hold on
+%     plot(rud540b.AoS, rud540b.CY,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{Y}');
+%     nexttile;
+%     plot(rud520b.AoS, rud520b.CD,'k-o');
+%     hold on
+%     plot(rud540b.AoS, rud540b.CD,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{D}');
+%     nexttile;
+%     plot(rud020b.AoS, rud020b.CMy,'k-o');
+%     hold on
+%     plot(rud040b.AoS, rud040b.CMy,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{My}');
+%     
+%     figure(5);%rudder 10 degrees OEI
+%     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+%     title(t,'rudder 10 degrees OEI');
+%     nexttile;
+%     plot(rud1020.AoS, rud1020.CL,'k-o');
+%     hold on
+%     plot(rud1040.AoS, rud1040.CL,'b-x');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{L}');
+%     legend('20m/s', '40m/s');    
+%     nexttile;
+%     plot(rud1020.AoS, rud1020.CY,'k-o');
+%     hold on
+%     plot(rud1040.AoS, rud1040.CY,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{Y}');
+%     nexttile;
+%     plot(rud1020.AoS, rud1020.CD,'k-o');
+%     hold on
+%     plot(rud1040.AoS, rud1040.CD,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{D}');
+%     nexttile;
+%     plot(rud1020.AoS, rud1020.CMy,'k-o');
+%     hold on
+%     plot(rud1040.AoS, rud1040.CMy,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{My}');
+% 
+%     figure(6);%rudder 10 degrees both engines
+%     t = tiledlayout(2,2,'TileSpacing','Compact','Padding','Compact');
+%     title(t,'rudder 10 degrees');
+%     nexttile;
+%     plot(rud1020b.AoS, rud1020b.CL,'k-o');
+%     hold on
+%     plot(rud1040b.AoS, rud1040b.CL,'b-x');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{L}');
+%     legend('20m/s', '40m/s');    
+%     nexttile;
+%     plot(rud1020b.AoS, rud1020b.CY,'k-o');
+%     hold on
+%     plot(rud1040b.AoS, rud1040b.CY,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{Y}');
+%     nexttile;
+%     plot(rud1020b.AoS, rud1020b.CD,'k-o');
+%     hold on
+%     plot(rud1040b.AoS, rud1040b.CD,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{D}');
+%     nexttile;
+%     plot(rud1020b.AoS, rud1020b.CMy,'k-o');
+%     hold on
+%     plot(rud1040b.AoS, rud1040b.CMy,'b-x');
+%     legend('20m/s', '40m/s');
+%     xlabel('\beta [deg]');
+%     ylabel('C_{My}');       
 end
 

@@ -32,7 +32,7 @@ function [dataStruct] = corrTailoff(dataStruct)
             dataStruct.tailoffAoS.CM25c(idx_tmp) = dataStruct.tailoffAoS.CM25c(idx_tmp).*((1+eps_tot).^2);
             dataStruct.tailoffAoS.CYaw(idx_tmp) = dataStruct.tailoffAoS.CYaw(idx_tmp).*((1+eps_tot).^2);
             dataStruct.tailoffAoS.CMy(idx_tmp) = dataStruct.tailoffAoS.CMy(idx_tmp).*((1+eps_tot).^2);
-            
+            dataStruct.tailoffAoS.CMr(idx_tmp) = dataStruct.tailoffAoS.CMr(idx_tmp).*((1+eps_tot).^2);
             %%lift interference
             %AoA
             dataStruct.tailoffAoS.AoA(idx_tmp) = dataStruct.tailoffAoS.AoA(idx_tmp) + ...
