@@ -29,7 +29,7 @@ function [dataStruct] = corrTailoff(dataStruct)
             dataStruct.tailoffAoS.Vinf(idx_tmp) = dataStruct.tailoffAoS.Vinf(idx_tmp).*(1+eps_tot);
             dataStruct.tailoffAoS.CL(idx_tmp) = dataStruct.tailoffAoS.CL(idx_tmp).*((1+eps_tot).^2);
             dataStruct.tailoffAoS.CD(idx_tmp) = dataStruct.tailoffAoS.CD(idx_tmp).*((1+eps_tot).^2);
-            dataStruct.tailoffAoS.CM25c(idx_tmp) = dataStruct.tailoffAoS.CM25c(idx_tmp).*((1+eps_tot).^2);
+            dataStruct.tailoffAoS.CMp25c(idx_tmp) = dataStruct.tailoffAoS.CMp25c(idx_tmp).*((1+eps_tot).^2);
             dataStruct.tailoffAoS.CYaw(idx_tmp) = dataStruct.tailoffAoS.CYaw(idx_tmp).*((1+eps_tot).^2);
             dataStruct.tailoffAoS.CMy(idx_tmp) = dataStruct.tailoffAoS.CMy(idx_tmp).*((1+eps_tot).^2);
             dataStruct.tailoffAoS.CMr(idx_tmp) = dataStruct.tailoffAoS.CMr(idx_tmp).*((1+eps_tot).^2);
@@ -40,11 +40,11 @@ function [dataStruct] = corrTailoff(dataStruct)
             %Cd    
             dataStruct.tailoffAoS.CD(idx_tmp) = dataStruct.tailoffAoS.CD(idx_tmp) + ...
                 dataStruct.delta.*(S/C).*dataStruct.tailoffAoS.CL(idx_tmp).^2;
-            %Cm25c            
+            %CMp25c            
             tmp = dataStruct.tailoffAoS(idx_tmp,:);
             p = polyfit(tmp.AoA,tmp.CL,1);
             Cla = p(1);
-            dataStruct.tailoffAoS.CM25c(idx_tmp) = dataStruct.tailoffAoS.CM25c(idx_tmp) + ...
+            dataStruct.tailoffAoS.CMp25c(idx_tmp) = dataStruct.tailoffAoS.CMp25c(idx_tmp) + ...
                 0.125.*dataStruct.tailoffAoS.AoA(idx_tmp).*Cla; 
             
             
