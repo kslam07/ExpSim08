@@ -20,16 +20,24 @@ load('stab_r10.mat');
 load('stab_r0_both.mat');
 load('stab_r5_both.mat');
 load('stab_r10_both.mat');
-load('thrust2.mat');
+load('thrust3.mat');
+
+t = data;
 
 %% SORT THRUST DATA - Rudder 0deg
 
-% Thrust2
-T_c_list = table2array(t.i1.rud0(:,7));
-T_vInf = table2array(t.i1.rud0(:,19));
-T_AoS = table2array(t.i1.rud0(:,6));
-T_rEng = table2array(t.i1.rud0(:,24));
-T_J = table2array(t.i1.rud0(:,28));
+% Thrust
+% T_c_list = table2array(t.i1.rud0(:,7));
+% T_vInf = table2array(t.i1.rud0(:,19));
+% T_AoS = table2array(t.i1.rud0(:,6));
+% T_rEng = table2array(t.i1.rud0(:,24));
+% T_J = table2array(t.i1.rud0(:,28));
+
+T_c_list = table2array(t.i0.rud0(:,7));
+T_vInf = table2array(t.i0.rud0(:,19));
+T_AoS = table2array(t.i0.rud0(:,6));
+T_rEng = table2array(t.i0.rud0(:,24));
+T_J = table2array(t.i0.rud0(:,28));
 
 % copy jprop measurements
 Tj = T_c_list(34:36);
@@ -101,11 +109,17 @@ T_AoS_r0_both = both_T_AoS;
 
 %% SORT THRUST DATA - Rudder 5deg
 
-% Thrust2
-T_c_list = table2array(t.i1.rud5(:,7));
-T_vInf = table2array(t.i1.rud5(:,19));
-T_AoS = table2array(t.i1.rud5(:,6));
-T_rEng = table2array(t.i1.rud5(:,24));
+% Thrust
+% T_c_list = table2array(t.i1.rud5(:,7));
+% T_vInf = table2array(t.i1.rud5(:,19));
+% T_AoS = table2array(t.i1.rud5(:,6));
+% T_rEng = table2array(t.i1.rud5(:,24));
+
+T_c_list = table2array(t.i0.rud5(:,7));
+T_vInf = table2array(t.i0.rud5(:,19));
+T_AoS = table2array(t.i0.rud5(:,6));
+T_rEng = table2array(t.i0.rud5(:,24));
+
 
 left_idx = find(T_rEng == 0);
 both_idx = find(T_rEng ~= 0);
@@ -161,11 +175,18 @@ T_AoS_r5_both = both_T_AoS;
 
 %% SORT THRUST DATA - Rudder 10deg
 
-% Thrust2
-T_c_list = table2array(t.i1.rud10(:,7));
-T_vInf = table2array(t.i1.rud10(:,19));
-T_AoS = table2array(t.i1.rud10(:,6));
-T_rEng = table2array(t.i1.rud10(:,24));
+% Thrust
+% T_c_list = table2array(t.i1.rud10(:,7));
+% T_vInf = table2array(t.i1.rud10(:,19));
+% T_AoS = table2array(t.i1.rud10(:,6));
+% T_rEng = table2array(t.i1.rud10(:,24));
+
+T_c_list = table2array(t.i0.rud10(:,7));
+T_vInf = table2array(t.i0.rud10(:,19));
+T_AoS = table2array(t.i0.rud10(:,6));
+T_rEng = table2array(t.i0.rud10(:,24));
+T_J = table2array(t.i0.rud10(:,28));
+
 
 % copy 19th measurement to 1 and delete
 T_c_list(1) = T_c_list(19);
@@ -472,16 +493,46 @@ wtBPF_40 = (475/60)*n_blades;
 
 density = 1.225;
 
-T_r0 = transpose(Tc_r0).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r0.vInf.^2);
-T_r0_both = transpose(Tc_r0_both).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r0.vInf.^2);
-T_r5 = transpose(Tc_r5).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r5.vInf.^2);
-T_r5_both = transpose(Tc_r5_both).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r5.vInf.^2);
-T_r10 = transpose(Tc_r10).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r10.vInf.^2);
-T_r10_both = transpose(Tc_r10_both).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r10.vInf.^2);
+v = 1.82*(10^(-5));
+MAC = 0.165;
+
+Re_20 = density*20*MAC/v;
+Re_40 = density*40*MAC/v;
+
+% T_r0 = transpose(Tc_r0).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r0.vInf.^2);
+% T_r0_both = transpose(Tc_r0_both).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r0.vInf.^2);
+% T_r5 = transpose(Tc_r5).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r5.vInf.^2);
+% T_r5_both = transpose(Tc_r5_both).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r5.vInf.^2);
+% T_r10 = transpose(Tc_r10).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r10.vInf.^2);
+% T_r10_both = transpose(Tc_r10_both).*(pi/4)*(D_p^2).*(0.5*density.*opp_stab_r10.vInf.^2);
+
+T_r0 = transpose(Tc_r0).*(pi/4)*(D_p^2).*(0.5*density.*T_vInf_r0.^2);
+T_r0_both = transpose(Tc_r0_both).*(pi/4)*(D_p^2).*(0.5*density.*T_vInf_r0.^2);
+T_r5 = transpose(Tc_r5).*(pi/4)*(D_p^2).*(0.5*density.*T_vInf_r5.^2);
+T_r5_both = transpose(Tc_r5_both).*(pi/4)*(D_p^2).*(0.5*density.*T_vInf_r5.^2);
+T_r10 = transpose(Tc_r10).*(pi/4)*(D_p^2).*(0.5*density.*T_vInf_r10.^2);
+T_r10_both = transpose(Tc_r10_both).*(pi/4)*(D_p^2).*(0.5*density.*T_vInf_r10.^2);
+
+[Tj_J, sortIdx] = sort(Tj_J,'ascend');
+
+% sort advance ratio values
+Tj = Tj(sortIdx);
+SPL_j = SPL_jprop(sortIdx);
+f_j = f_jprop(sortIdx);
+PXX_j = PXX_jprop(sortIdx);
+RPS_M1_j = opp_jprop.RPS_M1(sortIdx);
+RPS_M2_j = opp_jprop.RPS_M2(sortIdx);
+
+T_vInf = [39.86, 40.01, 40.21];
+
+% compute thrust
+Tj = transpose(Tj).*(pi/4)*(D_p^2).*(0.5*density.*T_vInf.^2);
 
 %% TEST VISUALIZE
 
-set(0,'DefaultFigureVisible','on');
+close all
+
+set(0,'DefaultFigureVisible','off');
 
 figure('Name','TEST SPL')
 for i= 1:6
@@ -495,18 +546,18 @@ for i= 1:6
     title(['Mic ',num2str(i)])
 end
 
-set(0,'DefaultFigureVisible','on');
+set(0,'DefaultFigureVisible','off');
 
 figure('Name','TEST PJ')
 for i= 1:6
     subplot(2,3,i), box on, hold on
-    plot(f{1}./(n_blades*RPS_M1(1)),sqrt(PXX{1}(:,i)).*(D_p^2)./T_r0(1),'r','DisplayName','AoS: '+string(opp_stab_r0.AoS(1)))
-    plot(f{9}./(n_blades*RPS_M1(9)),sqrt(PXX{9}(:,i)).*(D_p^2)./T_r0(9),'g','DisplayName','AoS: '+string(opp_stab_r0.AoS(9)))
-    plot(f{5}./(n_blades*RPS_M1(5)),sqrt(PXX{5}(:,i)).*(D_p^2)./T_r0(5),'b','DisplayName','AoS: '+string(opp_stab_r0.AoS(5)))
+    plot(f{10}./(n_blades*RPS_M1(10)),sqrt(PXX{10}(:,i)).*(D_p^2)./T_r0(10),'r','DisplayName','AoS: '+string(opp_stab_r0.AoS(10)))
+    plot(f{18}./(n_blades*RPS_M1(18)),sqrt(PXX{18}(:,i)).*(D_p^2)./T_r0(18),'g','DisplayName','AoS: '+string(opp_stab_r0.AoS(18)))
+    plot(f{14}./(n_blades*RPS_M1(14)),sqrt(PXX{14}(:,i)).*(D_p^2)./T_r0(14),'b','DisplayName','AoS: '+string(opp_stab_r0.AoS(14)))
     xlim([0 4])
     %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
-    xlabel('Frequency f [Hz]')
-    ylabel('SPL [dB]')
+    xlabel('Frequency f/BPF [-]')
+    ylabel('Pj [-]')
     title(['Mic ',num2str(i)])
     legend off
     legend show
@@ -516,48 +567,89 @@ end
 
 close all
 
+set(0,'DefaultFigureVisible','off');
+
+figure('Name','Prop on/off',"defaultAxesFontSize", 18)
+%t = tiledlayout(2,3,'TileSpacing','Compact','Padding','Compact');
+%nexttile
+
+for i = 4
+    box on, hold on
+    plot(f{5}./(n_blades*RPS_M1(5)),SPL{5}(:,i),'DisplayName','OEI')
+    plot(f_zero{1}./(n_blades*RPS_M1(5)),SPL_zero{1}(:,i),'DisplayName','Prop dummy')
+    xlim([0 4.5])
+    ylim([10,80])
+    tm = linspace(1,5,5);
+    tm2 = linspace(1/6, 5, 30);
+    xline(tm2, ':k','HandleVisibility','off')
+    xline(tm, '--','HandleVisibility','off','Color','#0072BD','LineWidth',1)
+    xline(1/6, '--k',{'Shaft','Vibration'},'HandleVisibility','off','FontSize', 16,'LineWidth',1);
+    xl1 = xline(0.1777*2, '--','EM Noise','DisplayName','EM Noise','HandleVisibility','off','Color','#D95319','FontSize', 16,'LineWidth',1);
+    xline(1, '--','Prop 1 BPF','HandleVisibility','off','Color','#0072BD','FontSize', 16,'LineWidth',1);
+    xline(2, '--','Prop 1 Harmonic','HandleVisibility','off','Color','#0072BD','FontSize', 16,'LineWidth',1);
+    xl1.LabelVerticalAlignment = 'bottom';
+    xl1.LabelHorizontalAlignment = 'right';
+    xlabel('Frequency f/BPF [-]')
+    ylabel('SPL [dB]')
+    title('U_\infty = 20 m/s')
+    legend off
+    legend show
+end
+
+%set(gcf, 'Position', get(0, 'Screensize'));
+%exportgraphics(gca,'proponoff_U20.pdf','resolution',300)
+
+figure('Name','Prop on/off',"defaultAxesFontSize", 18)
+
+for i= 4
+    box on, hold on
+    plot(f{14}./(n_blades*RPS_M1(14)),SPL{14}(:,i),'DisplayName','OEI')
+    plot(f_zero{6}./(n_blades*RPS_M1(14)),SPL_zero{6}(:,i),'DisplayName','Prop dummy')
+    xlim([0 4.5])
+    ylim([10,80])
+    tm = linspace(1,5,5);
+    tm2 = linspace(1/6, 5, 30);
+    tm3 = linspace(0.0888,0.0888*2,2);
+    xline(tm2, ':k','HandleVisibility','off')
+    xline(tm, '--','HandleVisibility','off','Color','#0072BD','LineWidth',1)
+    xline(1/6, '--k',{'Shaft','Vibration'},'HandleVisibility','off','FontSize', 16,'LineWidth',1);
+    xl1 = xline(0.1777*2, '--','EM Noise','DisplayName','EM Noise','HandleVisibility','off','Color','#D95319','FontSize', 16,'LineWidth',1);
+    xline(1, '--','Prop 1 BPF','HandleVisibility','off','Color','#0072BD','FontSize', 16,'LineWidth',1);
+    xline(2, '--','Prop 1 Harmonic','HandleVisibility','off','Color','#0072BD','FontSize', 16,'LineWidth',1);
+    xl1.LabelVerticalAlignment = 'bottom';
+    xl1.LabelHorizontalAlignment = 'right';
+    xlabel('Frequency f/BPF [-]')
+    ylabel('SPL [dB]')
+    title('U_\infty = 40 m/s')
+    legend off
+    legend show
+end
+
+%set(gcf, 'Position', get(0, 'Screensize'));
+%exportgraphics(gca,'proponoff_U40.pdf','resolution',300)
+
+%% VISUALIZE ADVANCE RATIO
+
+close all
+
 set(0,'DefaultFigureVisible','on');
 
-figure('Name','Prop on/off V=20')
-
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    plot(f{5}./(n_blades*RPS_M1(5)),SPL{5}(:,i),'r','DisplayName','Prop on AoS: '+string(opp_stab_r0.AoS(5)))
-    plot(f_zero{1}./(n_blades*RPS_M1(5)),SPL_zero{1}(:,i),'b','DisplayName','Prop off AoS: '+string(opp_on_poff_side.AoS(1)))
+figure('Name','Different Advance Ratios',"defaultAxesFontSize", 18)
+for i = 4
+    box on, hold on
+    plot(f_j{1}./(n_blades*RPS_M1_j(1)),sqrt(PXX_j{1}(:,i)).*(D_p^2)./Tj(1),'r')
+    plot(f_j{2}./(n_blades*RPS_M1_j(2)),sqrt(PXX_j{2}(:,i)).*(D_p^2)./Tj(2),'b')
+    plot(f_j{3}./(n_blades*RPS_M1_j(3)),sqrt(PXX_j{3}(:,i)).*(D_p^2)./Tj(3),'g')
     xlim([0 4])
-    %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
-    %freq_scale = (n_blades*RPS_M1(5))/wtBPF_20;
-    tm = linspace(0,4,5);
-    tm2 = linspace(0,1,7);
-    %tm3 = linspace(0,4,(freq_scale+1)*4);
-    %xline(tm3, '-.g','HandleVisibility','off')
-    xline(tm2, ':k','HandleVisibility','off')
-    xline(tm, '--r','HandleVisibility','off')
-    xlabel('Frequency f [Hz]')
-    ylabel('SPL [dB]')
-    title(['Mic ',num2str(i)])
-    legend off
-    legend show
+    xlabel('Frequency f/BPF [-]')
+    ylabel('Pj [-]')
+    leg = legend('J = 1.6','J = 1.8','J = 2.1');
+    set(leg,'FontSize',18);
+    title('U_\infty = 40 m/s')
+    grid on
 end
 
-figure('Name','Prop on/off V=40')
-
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    plot(f{14}./(n_blades*RPS_M1(14)),SPL{14}(:,i),'r','DisplayName','Prop on AoS: '+string(opp_stab_r0.AoS(14)))
-    plot(f_zero{6}./(n_blades*RPS_M1(6)),SPL_zero{6}(:,i),'b','DisplayName','Prop off AoS: '+string(opp_on_poff_side.AoS(6)))
-    xlim([0 4])
-    %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
-    tm = linspace(0,4,5);
-    tm2 = linspace(0,1,7);
-    xline(tm2, ':','HandleVisibility','off')
-    xline(tm, '--r','HandleVisibility','off')
-    xlabel('Frequency f [Hz]')
-    ylabel('SPL [dB]')
-    title(['Mic ',num2str(i)])
-    legend off
-    legend show
-end
+set(gcf, 'Position',  [100, 100, 700, 600])
 
 %% VISUALIZE AXIAL DIRECTIVITY
 
@@ -568,148 +660,56 @@ cs = 5;
 
 angles = [60, 75, 82.5, 90, 97.5];
 
-OSPL_mic1 = 10*log10(sum(10.^(SPL{cs}(:,1)/10)));
-OSPL_mic2 = 10*log10(sum(10.^(SPL{cs}(:,2)/10)));
-OSPL_mic3 = 10*log10(sum(10.^(SPL{cs}(:,3)/10)));
-OSPL_mic4 = 10*log10(sum(10.^(SPL{cs}(:,4)/10)));
-OSPL_mic5 = 10*log10(sum(10.^(SPL{cs}(:,5)/10)));
+% OSPL_mic1 = 10*log10(sum(10.^(SPL{cs}(:,1)/10)));
+% OSPL_mic2 = 10*log10(sum(10.^(SPL{cs}(:,2)/10)));
+% OSPL_mic3 = 10*log10(sum(10.^(SPL{cs}(:,3)/10)));
+% OSPL_mic4 = 10*log10(sum(10.^(SPL{cs}(:,4)/10)));
+% OSPL_mic5 = 10*log10(sum(10.^(SPL{cs}(:,5)/10)));
+% 
+% OSPL = [OSPL_mic1, OSPL_mic2, OSPL_mic3, OSPL_mic4, OSPL_mic5];
 
-OSPL = [OSPL_mic1, OSPL_mic2, OSPL_mic3, OSPL_mic4, OSPL_mic5];
+OSPL_mic1 = 10*log10(sum(10.^(SPL_j{1}(1:1500,1)/10)));
+OSPL_mic2 = 10*log10(sum(10.^(SPL_j{1}(1:1500,2)/10)));
+OSPL_mic3 = 10*log10(sum(10.^(SPL_j{1}(1:1500,3)/10)));
+OSPL_mic4 = 10*log10(sum(10.^(SPL_j{1}(1:1500,4)/10)));
+OSPL_mic5 = 10*log10(sum(10.^(SPL_j{1}(1:1500,5)/10)));
+
+OSPL1 = [OSPL_mic1, OSPL_mic2, OSPL_mic3, OSPL_mic4, OSPL_mic5];
+
+OSPL_mic1 = 10*log10(sum(10.^(SPL_j{2}(1:1500,1)/10)));
+OSPL_mic2 = 10*log10(sum(10.^(SPL_j{2}(1:1500,2)/10)));
+OSPL_mic3 = 10*log10(sum(10.^(SPL_j{2}(1:1500,3)/10)));
+OSPL_mic4 = 10*log10(sum(10.^(SPL_j{2}(1:1500,4)/10)));
+OSPL_mic5 = 10*log10(sum(10.^(SPL_j{2}(1:1500,5)/10)));
+
+OSPL2 = [OSPL_mic1, OSPL_mic2, OSPL_mic3, OSPL_mic4, OSPL_mic5];
+
+OSPL_mic1 = 10*log10(sum(10.^(SPL_j{3}(1:1500,1)/10)));
+OSPL_mic2 = 10*log10(sum(10.^(SPL_j{3}(1:1500,2)/10)));
+OSPL_mic3 = 10*log10(sum(10.^(SPL_j{3}(1:1500,3)/10)));
+OSPL_mic4 = 10*log10(sum(10.^(SPL_j{3}(1:1500,4)/10)));
+OSPL_mic5 = 10*log10(sum(10.^(SPL_j{3}(1:1500,5)/10)));
+
+OSPL3 = [OSPL_mic1, OSPL_mic2, OSPL_mic3, OSPL_mic4, OSPL_mic5];
 
 set(0,'DefaultFigureVisible','on');
 
-figure('Name','Axial Directivity')
+figure('Name','Axial Directivity',"defaultAxesFontSize", 18)
 
-box on
-plot(angles, OSPL, '-or')
-xlim([50 100])
-%ylim()
-xlabel('Axial Directivity [deg]')
+box on, hold on
+plot(angles, OSPL1, '-or')
+plot(angles, OSPL2, '-ob')
+plot(angles, OSPL3, '-og')
+xlim([55 100])
+ylim([100 135])
+xlabel('Axial emission angle \alpha_{ax} [deg]')
+leg = legend('J = 1.6','J = 1.8','J = 2.1');
+set(leg,'FontSize',18);
 ylabel('OSPL [dB]')
-    
-%% VISUALIZE ADVANCE RATIO
+title('U_\infty = 40 m/s')
+grid on
 
-close all
-
-[Tj_J, sortIdx] = sort(Tj_J,'ascend');
-
-% sort advance ratio values
-Tj = Tj(sortIdx);
-SPL_j = SPL_jprop(sortIdx);
-f_j = f_jprop(sortIdx);
-PXX_j = PXX_jprop(sortIdx);
-RPS_M1_j = opp_jprop.RPS_M1(sortIdx);
-RPS_M2_j = opp_jprop.RPS_M2(sortIdx);
-
-% compute thrust
-Tj = Tj.*(pi/4)*(D_p^2).*(0.5*density.*40.^2);
-
-set(0,'DefaultFigureVisible','on');
-
-figure('Name','Different Advance Ratios')
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    plot(f_j{1}./(n_blades*RPS_M1_j(1)),sqrt(PXX_j{1}(:,i)).*(D_p^2)./Tj(1),'DisplayName','J: '+string(Tj_J(1)))
-    plot(f_j{2}./(n_blades*RPS_M1_j(2)),sqrt(PXX_j{2}(:,i)).*(D_p^2)./Tj(2),'DisplayName','J: '+string(Tj_J(2)))
-    plot(f_j{3}./(n_blades*RPS_M1_j(3)),sqrt(PXX_j{3}(:,i)).*(D_p^2)./Tj(3),'DisplayName','J: '+string(Tj_J(3)))
-    xlim([0 4])
-    xlabel('Frequency f/BPF [-]')
-    ylabel('Pj [-]')
-    title(['Mic ',num2str(i)])
-    legend off
-    legend show
-end
-
-%% VISUALIZE DIFFERENT REYNOLDS
-
-close all
-
-set(0,'DefaultFigureVisible','on');
-
-v = 1.81*(10^(-5));
-MAC = 0.165;
-
-Re_20 = density*20*MAC/v;
-Re_40 = density*40*MAC/v;
-
-figure('Name','Different Reynolds Numbers')
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    plot(f{5}./(n_blades*RPS_M1(5)),sqrt(PXX{1}(:,i)).*(D_p^2)./T_r0(5),'r')
-    plot(f{14}./(n_blades*RPS_M1(5)),sqrt(PXX{5}(:,i)).*(D_p^2)./T_r0(14),'b')
-    xlim([0 4])
-    %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
-    xlabel('Frequency f/BPF [-]')
-    ylabel('Pj [-]')
-    title(['Mic ',num2str(i)])
-    legend('Re: '+string(round(Re_20/(10^(5)),1))+'$\times 10^5$','Re: '+string(round(Re_40/(10^(5)),1))+'$\times 10^5$','Interpreter','latex')
-end
-
-%% VISUALIZE SIDESLIP VARIATION - V = 40
-
-close all
-
-set(0,'DefaultFigureVisible','on');
-
-colors = ["r", "g", "b", "c", "m", "y", "k"];
-
-figure('Name','Sideslip range V=40')
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    ci = 1;
-    for state = 10:2:18
-        plot(f{state}./(n_blades*RPS_M1(state)),sqrt(PXX{state}(:,i)).*(D_p^2)./T_r0(state),colors(ci),'DisplayName','AoS: '+string(opp_stab_r0.AoS(state)))
-        ci = ci + 1;
-    end
-    xlim([0 4])
-    xlabel('Frequency f/BPF [-]')
-    ylabel('Pj [-]')
-    title(['Mic ',num2str(i)])
-    legend off
-    legend show
-end
-
-%% VISUALIZE SIDESLIP VARIATION - V = 20
-
-set(0,'DefaultFigureVisible','on');
-
-colors = ["r", "g", "b", "c", "m", "y", "k"];
-
-figure('Name','Sideslip range V=20')
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    ci = 1;
-    for state = 1:2:9
-        plot(f{state}./(n_blades*RPS_M1(state)),sqrt(PXX{state}(:,i)).*(D_p^2)./T_r0(state),colors(ci),'DisplayName','AoS: '+string(opp_stab_r0.AoS(state)))
-        ci = ci + 1;
-    end
-    xlim([0 4])
-    xlabel('Frequency f/BPF [-]')
-    ylabel('Pj [-]')
-    title(['Mic ',num2str(i)])
-    legend off
-    legend show
-end
-
-%% VISUALIZE DIFFERENT RUDDER ANGLE
-
-close all
-
-set(0,'DefaultFigureVisible','on');
-
-figure('Name','Different Reynolds Numbers')
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    plot(f{5}./(n_blades*RPS_M1(5)),PXX{1}(:,i).*(D_p^2)./T_r0(5),'r')
-    plot(f_r5{5}./(n_blades*RPS_M1_r5(5)),sqrt(PXX_r5{5}(:,i)).*(D_p^2)./T_r5(5),'b')
-    plot(f_r10{5}./(n_blades*RPS_M1_r5(5)),sqrt(PXX_r10{5}(:,i)).*(D_p^2)./T_r10(5),'g')
-    xlim([0 4])
-    %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
-    xlabel('Frequency f/BPF [-]')
-    ylabel('Pj [-]')
-    title(['Mic ',num2str(i)])
-    legend('rudder: 0 deg','rudder: 5 deg','rudder: 10 deg','Interpreter','latex')
-end
+set(gcf, 'Position',  [100, 100, 700, 600])
 
 %% VISUALIZE ONE OR BOTH PROPS ON
 
@@ -717,15 +717,145 @@ close all
 
 set(0,'DefaultFigureVisible','on');
 
-figure('Name','Different Reynolds Numbers')
-for i= 1:6
-    subplot(2,3,i), box on, hold on
-    plot(f{5}./(n_blades*RPS_M1(5)),sqrt(PXX{1}(:,i)).*(D_p^2)./T_r0(5),'r')
-    plot(f_both{5}./(n_blades*RPS_M1(5)),sqrt(PXX_both{5}(:,i)).*(D_p^2)./T_r0_both(5),'b')
+figure('Name','OEI/BEO',"defaultAxesFontSize", 18)
+
+for i = 4
+    box on, hold on
+    plot(f{5}./(n_blades*RPS_M1(5)),sqrt(PXX{1}(:,i)).*(D_p^2)./T_r0(5))
+    plot(f_both{5}./(n_blades*RPS_M1_both(5)),sqrt(PXX_both{5}(:,i)).*(D_p^2)./T_r0_both(5))
     xlim([0 4])
     %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
     xlabel('Frequency f/BPF [-]')
     ylabel('Pj [-]')
-    title(['Mic ',num2str(i)])
-    legend('left prop','both prop','Interpreter','latex')
+    legend('OEI','BEO','Interpreter','latex')
+    grid on
 end
+
+set(gcf, 'Position',  [100, 100, 700, 600])
+
+%% VISUALIZE DIFFERENT REYNOLDS
+
+close all
+
+set(0,'DefaultFigureVisible','on');
+
+figure('Name','Different Reynolds Numbers',"defaultAxesFontSize", 18)
+
+T_r0(5)
+T_r0(14)
+
+for i = 4
+    box on, hold on
+    plot(f{5}./(n_blades*RPS_M1(5)),sqrt(PXX{1}(:,i)).*(D_p^2)./T_r0(5))
+    plot(f{14}./(n_blades*RPS_M1(14)),sqrt(PXX{14}(:,i)).*(D_p^2)./T_r0(14))
+    xlim([0 4])
+    %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
+    xlabel('Frequency f/BPF [-]')
+    ylabel('Pj [-]')
+    legend('Re: '+string(round(Re_20/(10^(5)),1))+'$\times 10^5$','Re: '+string(round(Re_40/(10^(5)),1))+'$\times 10^5$','Interpreter','latex')
+    grid on
+end
+
+set(gcf, 'Position',  [100, 100, 700, 600])
+
+%% VISUALIZE SIDESLIP VARIATION
+
+close all
+
+set(0,'DefaultFigureVisible','on');
+
+colors = ["r", "g", "b", "c", "m", "y", "k"];
+
+figure('Name','Sideslip range V=40',"defaultAxesFontSize", 18)
+% for i= 1:6
+%     subplot(2,3,i), box on, hold on
+%     ci = 1;
+%     for state = 10:2:18
+%         plot(f{state}./(n_blades*RPS_M1(state)),sqrt(PXX{state}(:,i)).*(D_p^2)./T_r0(state),colors(ci),'DisplayName','AoS: '+string(round(opp_stab_r0.AoS(state)))+'^{\circ}')
+%         ci = ci + 1;
+%     end
+%     xlim([0 4])
+%     xlabel('Frequency f/BPF [-]')
+%     ylabel('Pj [-]')
+%     title(['Mic ',num2str(i)])
+%     legend off
+%     legend show
+%     grid on
+% end
+
+for i= 4
+    box on, hold on
+    ci = 1;
+    for state = 10:2:18
+        plot(f{state}./(n_blades*RPS_M1(state)),sqrt(PXX{state}(:,i)).*(D_p^2)./T_r0(state),colors(ci),'DisplayName','AoS: '+string(round(opp_stab_r0.AoS(state)))+'^{\circ}')
+        ci = ci + 1;
+    end
+    xlim([0 4])
+    xlabel('Frequency f/BPF [-]')
+    ylabel('Pj [-]')
+    title('U_\infty = 40 m/s')
+    legend off
+    legend show
+    grid on
+end
+
+set(gcf, 'Position',  [100, 100, 700, 600])
+
+figure('Name','Sideslip range V=20',"defaultAxesFontSize", 18)
+% for i= 1:6
+%     subplot(2,3,i), box on, hold on
+%     ci = 1;
+%     for state = 1:2:9
+%         plot(f{state}./(n_blades*RPS_M1(state)),sqrt(PXX{state}(:,i)).*(D_p^2)./T_r0(state),colors(ci),'DisplayName','AoS: '+string(round(opp_stab_r0.AoS(state)))+'^{\circ}')
+%         ci = ci + 1;
+%     end
+%     xlim([0 4])
+%     xlabel('Frequency f/BPF [-]')
+%     ylabel('Pj [-]')
+%     title(['Mic ',num2str(i)])
+%     legend off
+%     legend show
+%     grid on
+% end
+
+for i= 4
+    box on, hold on
+    ci = 1;
+    for state = 1:2:9
+        plot(f{state}./(n_blades*RPS_M1(state)),sqrt(PXX{state}(:,i)).*(D_p^2)./T_r0(state),colors(ci),'DisplayName','AoS: '+string(round(opp_stab_r0.AoS(state)))+'^{\circ}')
+        ci = ci + 1;
+    end
+    xlim([0 4])
+    xlabel('Frequency f/BPF [-]')
+    ylabel('Pj [-]')
+    title('U_\infty = 20 m/s')
+    legend off
+    legend show
+    grid on
+end
+
+set(gcf, 'Position',  [100, 100, 700, 600])
+
+%% VISUALIZE DIFFERENT RUDDER ANGLE
+
+close all
+
+set(0,'DefaultFigureVisible','on');
+
+figure('Name','Rudder Angles',"defaultAxesFontSize", 18)
+
+for i = 4
+    box on, hold on
+    plot(f{14}./(n_blades*RPS_M1(5)),sqrt(PXX{5}(:,i)).*(D_p^2)./T_r0(5),'r')
+    plot(f_r5{5}./(n_blades*RPS_M1_r5(5)),sqrt(PXX_r5{5}(:,i)).*(D_p^2)./T_r5(5),'b')
+    plot(f_r10{5}./(n_blades*RPS_M1_r10(5)),sqrt(PXX_r10{5}(:,i)).*(D_p^2)./T_r10(5),'g')
+    xlim([0 4])
+    %ylim([min(SPL{14}(1:100,i)) max(SPL{14}(1:100,i))+10])
+    xlabel('Frequency f/BPF [-]')
+    ylabel('Pj [-]')
+    title('U_\infty = 20 m/s')
+    legend('\delta_r: 0 deg','\delta_r: 5 deg','\delta_r: 10 deg')
+    grid on
+end
+
+set(gcf, 'Position',  [100, 100, 700, 600])
