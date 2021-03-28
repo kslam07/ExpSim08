@@ -1,5 +1,4 @@
-function dataStruct = translateMoments(dataStruct, cgLoc, ...
-                                                    refLoc)
+function dataStruct = translateMoments(dataStruct, cgLoc, idxTable)
 %TRANSLATEMOMENTS relocate the moments to the centre of gravity
 %   Moment translation; should be easy I hope
 % dataStruct - data structure containing measurement data
@@ -7,23 +6,25 @@ function dataStruct = translateMoments(dataStruct, cgLoc, ...
 % refLoc - moment reference point @ force balance in model reference system
 
     % unpack the forces and moments
-    fxID = "CT"; fyID = "CN"; fzID = "CY"; mxID = "CMr"; myID = "CMp";
-    mzID = "CMy";
+    fxID = "CT"; fzID = "CN"; fyID = "CY"; mxID = "CMr"; myID = "CMp25c";
+    mzID = "CMy"; myCGID = "CMp";
     
-    dataTable = dataStruct.("i0");
+    dataTable = dataStruct.(idxTable);
     fieldNames = fieldnames(dataTable);
-    dataTableNew = struct();
     
-    % translate moments to CG from reference location
+    % unpack the the model reference location (c/4)
+    refLoc = dataStruct.locRefM;
+    
+    %% translate moments to CG from quarter-chord location
     for iName = 1:length(fieldNames)
-        data = dataTable.(cell2mat(fieldNames(iName)));
+        nameMeas = cell2mat(fieldNames(iName));
+        data = dataTable.(nameMeas);
         coeffs = table2array(data(:,[fxID, fyID, fzID, mxID, myID, mzID]));
-        % get density, velocity and 
+
         % recompute moment coefficients at CG
-        dLoc = refLoc - cgLoc;
-        % My = Fx * dz + Fz * dx
-        myCG = coeffs(:,5)-coeffs(:,3).*dLoc(1) - ...
-            coeffs(:,1).*dLoc(end);
+        dLoc = cgLoc - refLoc;
+        % My = Fx * dz; CG is behind the c/4 point
+        myCG = coeffs(:,5)+coeffs(:,3).*dLoc(1);
         
         % Mx = Fy * dz + Fz * dy - this is zero
 %         mxCG = coeffs(:,4)-coeffs(:,2).*relLocs(:,end) - ...
@@ -31,15 +32,14 @@ function dataStruct = translateMoments(dataStruct, cgLoc, ...
 %         % My = Fx * dz + Fz * dx
 %         myCG = coeffs(:,5)-coeffs(:,3).*relLocs(:,1) - ...
 %             coeffs(:,1).*relLocs(:,end);
-%         % Mz = Fx * dy + Fy * dx - this is zero
-%         mzCG = coeffs(:,6)-coeffs(:,2).*relLocs(:,1) - ...
-%             coeffs(:,1).*relLocs(:,2);
 
-        % rewrite CMX, CMY, CMZ columns of dataArray
-        dataNew = data;
-        dataNew.(myID) = myCG;
-        dataTableNew.(cell2mat(fieldNames(iName))) = dataNew;
+        % Mz = Fy * dx
+        mzCG = coeffs(:,6)+coeffs(:,2).*dLoc(:,1);
+
+        % assign new values to CMy and CMp !!! NOT CMp25c !!!
+        data.(mzID) = mzCG; 
+        data.(myCGID) = myCG;
+        dataStruct.i0.(nameMeas) = data;
     end
-    dataStruct.i1 = dataTableNew;
 end
 

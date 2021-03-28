@@ -24,7 +24,7 @@ function [dalphaSC, dCmSC, dCdSC] = corrStreamlines(dataStruct, idxTable)
         % 2D interpolate to get CL|w
         CLw = CLinterp(data.AoA, data.V, data.AoS);
         % compute AoA correction
-        dalphaUW = dataStruct.delta*(dataStruct.sRef/dataStruct.cRef)*CLw;
+        dalphaUW = dataStruct.delta*(dataStruct.sRef/dataStruct.tunnelArea)*CLw;
         dalphaSCi = dataStruct.tau2Wing*dataStruct.cRef/2*dalphaUW;
         % compute lift slope for given sideslip and Vinf
         CLa = computeCLa(data, dataStruct.tailoffAoS)';

@@ -97,12 +97,24 @@ methods (Static)
 %         subplot(1,2,1)
 %         plot(propOff20.AoS,propOff20.CT)
 %         hold on 
-%         plot(rud1020b.AoS,rud1020b.CT)
+%         plot(rud020b.AoS([1:4 7:10]),rud020b.CT([1:4 7:10]))
+% %         plot(rud520b.AoS,rud1020b.CL)
 %         plot(propOff20.AoS,polyval(fit20CT,propOff20.AoS))
 %         title('v = 20')
 %         xlabel('\beta')
 %         ylabel('C_{Tref}')
+%         xlim([-10,10])
 %         legend('Prop Off', 'Prop On', 'Prop Off fit','Location','south')
+%         
+%         data=rud020b;
+%         for idx=1:length(data.AoS)
+%             dcm=angle2dcm(deg2rad(data.AoS(idx)), deg2rad(data.AoA(idx)), 0);
+%             aero=[-data.CD(idx); data.CYaw(idx); -data.CL(idx)];
+%             model=dcm*aero.*[-1; 1; -1];
+%             data.CT(idx)=model(1);
+%             data.CY(idx)=model(2);
+%             data.CN(idx)=model(3);
+%         end
 %                
 %         subplot(1,2,2)
 %         plot(propOff40.AoS,propOff40.CT)

@@ -6,17 +6,25 @@ function dataStruct = removeModelOff(dataStruct, idxTable)
         'VariableNamingRule','preserve');
     AoAdata = table2array(modelOff(1:20, 1:8));
     % get fields of data and correct inner struct (which contains the meas.)
-    dataTable = dataStruct.(idxTable);                    
-    fieldNames = fieldnames(dataTable);
-    
+    dataTable = dataStruct.(idxTable);
+        
+    if idxTable ~= "tailoffAoS"
+        fieldNames = fieldnames(dataTable);
+        lenMeas = length(fieldNames);
+    else
+        lenMeas = 1;
+    end
     % compute d(coefficient) effect from given AoA
     % interpolate alpha values
-    
-    for iName = 1:4
+    % for the measurements
+    for iName = 1:lenMeas
         % measurements from a given rudder defl.
-        nameMeas = cell2mat(fieldNames(iName));
-        data = dataTable.(nameMeas);
-        
+        if idxTable ~= "tailoffAoS"
+            nameMeas = cell2mat(fieldNames(iName));
+            data = dataTable.(nameMeas);
+        else
+            data = dataTable;
+        end
         % compute dCL = (CL|alpha - CL|alpha=0) for correction
         CDInterpAlpha = interp1(AoAdata(:,1), AoAdata(:,3), data.AoA) ...
             - AoAdata(6,3);
@@ -30,38 +38,53 @@ function dataStruct = removeModelOff(dataStruct, idxTable)
             - AoAdata(6,7);
         CMyInterpAlpha = interp1(AoAdata(:,1), AoAdata(:,8), data.AoA)...
             - AoAdata(6,8);
-        
+
         AoAEffect = [CDInterpAlpha, CYInterpAlpha, CLInterpAlpha, ...
             CMrInterpAlpha, CMpInterpAlpha, CMyInterpAlpha];
-        
-        %     % effect of 2 deg aoa on forces
-    %     AoAEffect=table2array(modelOff(8,2:8))-table2array(modelOff(6,2:8));
-        % forces at -10, -6, -4, -2, 0, 2, 4, 6, 10 for AoS
-        AoSEffect=modelOff{[1,5,7,9,11,13,15,17,21],11:17};
+
 
         % makes fit of forces in aero frame
-        AoSFitCD=polyfit(AoSEffect(:,1),AoSEffect(:,2),8);
-        AoSFitCy=polyfit(AoSEffect(:,1),AoSEffect(:,3),8);
-        AoSFitCL=polyfit(AoSEffect(:,1),AoSEffect(:,4),8);
-        AoSFitCMroll=polyfit(AoSEffect(:,1),AoSEffect(:,5),8);
-        AoSFitCMpitch=polyfit(AoSEffect(:,1),AoSEffect(:,6),8);
-        AoSFitCMyaw=polyfit(AoSEffect(:,1),AoSEffect(:,7),8);
+        AoSdata=modelOff{1:end-3,11:17};
+        
+        % interpolate model off data
+        CDInterpBeta = interp1(AoSdata(:,1), AoSdata(:,2), data.AoS, ...
+            "linear",  "extrap");
+        CYInterpBeta = interp1(AoSdata(:,1), AoSdata(:,3), data.AoS, ...
+            "linear", "extrap");
+        CLInterpBeta = interp1(AoSdata(:,1), AoSdata(:,4), data.AoS, ...
+            "linear", "extrap");
+        CMrInterpBeta = interp1(AoSdata(:,1), AoSdata(:,5), data.AoS, ...
+            "linear", "extrap");
+        CMpInterpBeta = interp1(AoSdata(:,1), AoSdata(:,6), data.AoS, ...
+            "linear", "extrap");
+        CMyInterpBeta = interp1(AoSdata(:,1), AoSdata(:,7), data.AoS, ...
+            "linear", "extrap");
 
-        CD=polyval(AoSFitCD,data.AoS)+AoAEffect(:,1);
-        Cy=polyval(AoSFitCy,data.AoS)+AoAEffect(:,2);
-        CL=polyval(AoSFitCL,data.AoS)+AoAEffect(:,3);
-        CMroll=polyval(AoSFitCMroll,data.AoS)+AoAEffect(:,4);
-        CMpitch=polyval(AoSFitCMpitch,data.AoS)+AoAEffect(:,5);
-        CMyaw=polyval(AoSFitCMyaw,data.AoS)+AoAEffect(:,6);
+        % group them in array
+        AoSEffect = [CDInterpBeta, CYInterpBeta, CLInterpBeta, ...
+            CMrInterpBeta, CMpInterpBeta, CMyInterpBeta];    
 
+        % compute total model off correction
+        CD=AoSEffect(:,1)+AoAEffect(:,1);
+        Cy=AoSEffect(:,2)+AoAEffect(:,2);
+        CL=AoSEffect(:,3)+AoAEffect(:,3);
+        CMr=AoSEffect(:,4)+AoAEffect(:,4);
+        CMp=AoSEffect(:,5)+AoAEffect(:,5);
+        CMy=AoSEffect(:,6)+AoAEffect(:,6);
+
+        % subtract from measurements
         data.CD=data.CD-CD;
         data.CYaw=data.CYaw-Cy;
         data.CL=data.CL-CL;
-        data.CMr=data.CMr-CMroll;
-        data.CMp=data.CMp-CMpitch;
-        data.CMp25c=data.CMp25c-CMpitch;
-        data.CMy=data.CMy-CMyaw;
+        data.CMr=data.CMr-CMr;
+        data.CMy=data.CMy-CMy;
+        data.CMp25c=data.CMp25c-CMp;
 
+        if idxTable ~= "tailoffAoS"
+            data.CMp=data.CMp-CMp;
+        end
+        
+        % rotate all preceding and model-off correction from aero to body
         for idx=1:length(data.AoS)
             dcm=angle2dcm(deg2rad(data.AoS(idx)), deg2rad(data.AoA(idx)), 0);
             aero=[-data.CD(idx); data.CYaw(idx); -data.CL(idx)];
@@ -70,8 +93,13 @@ function dataStruct = removeModelOff(dataStruct, idxTable)
             data.CY(idx)=model(2);
             data.CN(idx)=model(3);
         end
-        
-        dataStruct.(idxTable).(nameMeas) = data;
+        if idxTable ~= "tailoffAoS"
+            dataStruct.(idxTable).(nameMeas) = data;
+        else
+            dataStruct.(idxTable) = data;
+        end
     end
+        
+        
 end
 

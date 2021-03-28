@@ -35,7 +35,7 @@ function dataStruct = load2Struct(measPath, tailOffPath)
     % tail length taken to be c/2; b_eff = 1.21582
     delta       = 0.103;                                % interference
     tau2Wing    = 0.1458;                               % upwash corr.
-    tau2Tail    = 0.721;                                % upwash corr.    
+    tau2Tail    = 0.753;                                % upwash corr.    
     dCmp25c     = -0.14563703320;
     
     % blockage factors
